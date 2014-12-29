@@ -11,7 +11,7 @@ We've tested against Eclipse 3.4 and 3.5.  Later versions will likely also
 work, earlier versions may not.
 
 If the directory containing this file does not have a .classpath or .project
-file, generate them by running 'ant eclipse.generate'
+file, generate them by running 'ant eclipse.generate -Dgwt.sdk=<PATH_TO_YOUR_SKD_DIR>'
 
 In Eclipse, go to the File menu and choose:
 

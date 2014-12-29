@@ -26,3 +26,6 @@ www-test/
 
 #old GWT (1.5) created this dir
 .gwt-tmp/
+
+# Eclipse project file needs to be generated on each install per instructions in README.txt
+.project
