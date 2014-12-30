@@ -15,10 +15,15 @@
  */
 package com.google.gwt.sample.showcase.client.content.cell;
 
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.user.cellview.client.AbstractPager;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.ScrollPanel;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasRows;
 
@@ -48,6 +53,8 @@ public class ShowMorePagerPanel extends AbstractPager {
    */
   private final ScrollPanel scrollable = new ScrollPanel();
 
+  private UIObject loadingStatus;
+
   /**
    * Construct a new {@link ShowMorePagerPanel}.
    */
@@ -67,7 +74,7 @@ public class ShowMorePagerPanel extends AbstractPager {
           return;
         }
 
-        HasRows display = getDisplay();
+        final HasRows display = getDisplay();
         if (display == null) {
           return;
         }
@@ -75,10 +82,18 @@ public class ShowMorePagerPanel extends AbstractPager {
             - scrollable.getOffsetHeight();
         if (lastScrollPos >= maxScrollTop) {
           // We are near the end, so increase the page size.
-          int newPageSize = Math.min(
+          final int newPageSize = Math.min(
               display.getVisibleRange().getLength() + incrementSize,
               display.getRowCount());
-          display.setVisibleRange(0, newPageSize);
+          Timer timer = new Timer() {
+      			@Override
+      			public void run() {
+      				display.setVisibleRange(0, newPageSize);
+              loadingStatus.setVisible(false);
+      			}
+          };
+          loadingStatus.setVisible(true);
+          timer.schedule(1000);
         }
       }
     });
@@ -114,4 +129,8 @@ public class ShowMorePagerPanel extends AbstractPager {
   @Override
   protected void onRangeOrRowCountChanged() {
   }
+
+	public void setLoadingStatusWidget(UIObject loadingStatus) {
+    this.loadingStatus = loadingStatus;
+	}
 }

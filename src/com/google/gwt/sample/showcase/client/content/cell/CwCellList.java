@@ -18,6 +18,8 @@ package com.google.gwt.sample.showcase.client.content.cell;
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.i18n.client.Constants;
@@ -37,6 +39,7 @@ import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSe
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
+import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -146,6 +149,9 @@ public class CwCellList extends ContentWidget {
   @ShowcaseData
   private CellList<ContactInfo> cellList;
 
+  @UiField
+  UIObject loadingStatus;
+  
   /**
    * Constructor.
    *
@@ -194,11 +200,14 @@ public class CwCellList extends ContentWidget {
     // Add the CellList to the data provider in the database.
     ContactDatabase.get().addDataDisplay(cellList);
 
+    loadingStatus.setVisible(false);
+    
     // Set the cellList as the display of the pagers. This example has two
     // pagers. pagerPanel is a scrollable pager that extends the range when the
     // user scrolls to the bottom. rangeLabelPager is a pager that displays the
     // current range, but does not have any controls to change the range.
     pagerPanel.setDisplay(cellList);
+    pagerPanel.setLoadingStatusWidget(loadingStatus);
     rangeLabelPager.setDisplay(cellList);
 
     // Handle events from the generate button.
