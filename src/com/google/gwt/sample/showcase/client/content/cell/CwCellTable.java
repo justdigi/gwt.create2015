@@ -134,24 +134,24 @@ public class CwCellTable extends ContentWidget {
     cellTable.setAutoHeaderRefreshDisabled(true);
     cellTable.setAutoFooterRefreshDisabled(true);
 
-    // Attach a column sort handler to the ListDataProvider to sort the list.
-    ListHandler<ContactInfo> sortHandler = new ListHandler<ContactInfo>(
-        ContactDatabase.get().getDataProvider().getList());
-    cellTable.addColumnSortHandler(sortHandler);
-
-    // Create a Pager to control the table.
-    SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
-    pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0, true);
-    pager.setDisplay(cellTable);
-
-    // Add a selection model so we can select cells.
-    final SelectionModel<ContactInfo> selectionModel = new MultiSelectionModel<ContactInfo>(
-        ContactDatabase.ContactInfo.KEY_PROVIDER);
-    cellTable.setSelectionModel(selectionModel,
-        DefaultSelectionEventManager.<ContactInfo> createCheckboxManager());
-
-    // Initialize the columns.
-    initTableColumns(selectionModel, sortHandler);
+//    // Attach a column sort handler to the ListDataProvider to sort the list.
+//    ListHandler<ContactInfo> sortHandler = new ListHandler<ContactInfo>(
+//        ContactDatabase.get().getDataProvider().getList());
+//    cellTable.addColumnSortHandler(sortHandler);
+//
+//    // Create a Pager to control the table.
+//    SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
+//    pager = new SimplePager(TextLocation.CENTER, pagerResources, false, 0, true);
+//    pager.setDisplay(cellTable);
+//
+//    // Add a selection model so we can select cells.
+//    final SelectionModel<ContactInfo> selectionModel = new MultiSelectionModel<ContactInfo>(
+//        ContactDatabase.ContactInfo.KEY_PROVIDER);
+//    cellTable.setSelectionModel(selectionModel,
+//        DefaultSelectionEventManager.<ContactInfo> createCheckboxManager());
+//
+//    // Initialize the columns.
+//    initTableColumns(selectionModel, sortHandler);
 
     // Add the CellList to the adapter in the database.
     ContactDatabase.get().addDataDisplay(cellTable);

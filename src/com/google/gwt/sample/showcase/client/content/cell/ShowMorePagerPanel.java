@@ -53,8 +53,6 @@ public class ShowMorePagerPanel extends AbstractPager {
    */
   private final ScrollPanel scrollable = new ScrollPanel();
 
-  private UIObject loadingStatus;
-
   /**
    * Construct a new {@link ShowMorePagerPanel}.
    */
@@ -85,15 +83,7 @@ public class ShowMorePagerPanel extends AbstractPager {
           final int newPageSize = Math.min(
               display.getVisibleRange().getLength() + incrementSize,
               display.getRowCount());
-          Timer timer = new Timer() {
-      			@Override
-      			public void run() {
-      				display.setVisibleRange(0, newPageSize);
-              loadingStatus.setVisible(false);
-      			}
-          };
-          loadingStatus.setVisible(true);
-          timer.schedule(1000);
+          display.setVisibleRange(0, newPageSize);
         }
       }
     });
@@ -129,8 +119,4 @@ public class ShowMorePagerPanel extends AbstractPager {
   @Override
   protected void onRangeOrRowCountChanged() {
   }
-
-	public void setLoadingStatusWidget(UIObject loadingStatus) {
-    this.loadingStatus = loadingStatus;
-	}
 }

@@ -593,10 +593,10 @@ public class CwCustomDataGrid extends ContentWidget {
     // Set the message to display when the table is empty.
     dataGrid.setEmptyTableWidget(new Label(constants.cwCustomDataGridEmpty()));
 
-    // Attach a column sort handler to the ListDataProvider to sort the list.
-    ListHandler<ContactInfo> sortHandler =
-        new ListHandler<ContactInfo>(ContactDatabase.get().getDataProvider().getList());
-    dataGrid.addColumnSortHandler(sortHandler);
+//    // Attach a column sort handler to the ListDataProvider to sort the list.
+//    ListHandler<ContactInfo> sortHandler =
+//        new ListHandler<ContactInfo>(ContactDatabase.get().getDataProvider().getList());
+//    dataGrid.addColumnSortHandler(sortHandler);
 
     // Create a Pager to control the table.
     SimplePager.Resources pagerResources = GWT.create(SimplePager.Resources.class);
@@ -609,8 +609,8 @@ public class CwCustomDataGrid extends ContentWidget {
     dataGrid.setSelectionModel(selectionModel, DefaultSelectionEventManager
         .<ContactInfo> createCheckboxManager());
 
-    // Initialize the columns.
-    initializeColumns(sortHandler);
+//    // Initialize the columns.
+//    initializeColumns(sortHandler);
 
     // Specify a custom table.
     dataGrid.setTableBuilder(new CustomTableBuilder());

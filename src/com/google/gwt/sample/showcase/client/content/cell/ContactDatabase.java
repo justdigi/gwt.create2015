@@ -18,6 +18,8 @@ package com.google.gwt.sample.showcase.client.content.cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.user.client.Random;
+import com.google.gwt.user.client.ui.UIObject;
+import com.google.gwt.view.client.AbstractDataProvider;
 import com.google.gwt.view.client.HasData;
 import com.google.gwt.view.client.ListDataProvider;
 import com.google.gwt.view.client.ProvidesKey;
@@ -320,7 +322,7 @@ public class ContactDatabase {
   /**
    * The provider that holds the list of contacts in the database.
    */
-  private ListDataProvider<ContactInfo> dataProvider = new ListDataProvider<ContactInfo>();
+  private final AsyncContactProvider dataProvider = new AsyncContactProvider();
 
   private final Category[] categories;
 
@@ -352,10 +354,9 @@ public class ContactDatabase {
    * @param contact the contact to add.
    */
   public void addContact(ContactInfo contact) {
-    List<ContactInfo> contacts = dataProvider.getList();
     // Remove the contact first so we don't add a duplicate.
-    contacts.remove(contact);
-    contacts.add(contact);
+    dataProvider.remove(contact);
+    dataProvider.add(contact);
   }
 
   /**
@@ -375,13 +376,12 @@ public class ContactDatabase {
    * @param count the number of contacts to generate.
    */
   public void generateContacts(int count) {
-    List<ContactInfo> contacts = dataProvider.getList();
     for (int i = 0; i < count; i++) {
-      contacts.add(createContactInfo());
+      dataProvider.add(createContactInfo());
     }
   }
 
-  public ListDataProvider<ContactInfo> getDataProvider() {
+  public AsyncContactProvider getDataProvider() {
     return dataProvider;
   }
 
@@ -402,11 +402,12 @@ public class ContactDatabase {
    */
   public List<ContactInfo> queryContactsByCategory(Category category) {
     List<ContactInfo> matches = new ArrayList<ContactInfo>();
-    for (ContactInfo contact : dataProvider.getList()) {
-      if (contact.getCategory() == category) {
-        matches.add(contact);
-      }
-    }
+//    Unimplemented.
+//    for (ContactInfo contact : dataProvider.getList()) {
+//      if (contact.getCategory() == category) {
+//        matches.add(contact);
+//      }
+//    }
     return matches;
   }
 
@@ -421,11 +422,12 @@ public class ContactDatabase {
   public List<ContactInfo> queryContactsByCategoryAndFirstName(Category category,
       String firstNamePrefix) {
     List<ContactInfo> matches = new ArrayList<ContactInfo>();
-    for (ContactInfo contact : dataProvider.getList()) {
-      if (contact.getCategory() == category && contact.getFirstName().startsWith(firstNamePrefix)) {
-        matches.add(contact);
-      }
-    }
+//    Unimplemented.
+//    for (ContactInfo contact : dataProvider.getList()) {
+//      if (contact.getCategory() == category && contact.getFirstName().startsWith(firstNamePrefix)) {
+//        matches.add(contact);
+//      }
+//    }
     return matches;
   }
 
@@ -437,16 +439,17 @@ public class ContactDatabase {
    */
   public Set<ContactInfo> queryFriends(ContactInfo contact) {
     Set<ContactInfo> friends = friendsMap.get(contact.getId());
-    if (friends == null) {
-      // Assign some random friends.
-      friends = new HashSet<ContactInfo>();
-      int numContacts = dataProvider.getList().size();
-      int friendCount = 2 + Random.nextInt(8);
-      for (int i = 0; i < friendCount; i++) {
-        friends.add(dataProvider.getList().get(Random.nextInt(numContacts)));
-      }
-      friendsMap.put(contact.getId(), friends);
-    }
+//    Unimplemented.
+//    if (friends == null) {
+//      // Assign some random friends.
+//      friends = new HashSet<ContactInfo>();
+//      int numContacts = dataProvider.getList().size();
+//      int friendCount = 2 + Random.nextInt(8);
+//      for (int i = 0; i < friendCount; i++) {
+//        friends.add(dataProvider.getList().get(Random.nextInt(numContacts)));
+//      }
+//      friendsMap.put(contact.getId(), friends);
+//    }
     return friends;
   }
 
