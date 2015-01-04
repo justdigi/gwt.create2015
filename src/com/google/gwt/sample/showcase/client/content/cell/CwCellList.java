@@ -151,6 +151,9 @@ public class CwCellList extends ContentWidget {
   CheckBox predictiveScrollingCheckbox;
 
   @UiField
+  CheckBox followUpFetchingCheckbox;
+
+  @UiField
   Button reload;
 
   /**
@@ -228,6 +231,15 @@ public class CwCellList extends ContentWidget {
             predictiveScrollingCheckbox.setValue(event.getValue());
           }
         });
+    
+    Settings.get().addFollowUpFetchingValueChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            followUpFetchingCheckbox.setValue(event.getValue());
+          }
+        });
+
     return widget;
   }
 
@@ -251,10 +263,15 @@ public class CwCellList extends ContentWidget {
     Settings.get().setPredictiveScrolling(event.getValue());
   }
   
+  @UiHandler("followUpFetchingCheckbox")
+  protected void onFollowUpFetchingCheckboxChange(
+      ValueChangeEvent<Boolean> event) {
+    Settings.get().setFollowUpFetching(event.getValue());
+  }
+  
   @UiHandler("reload")
   protected void onReload(ClickEvent event) {
     ContactDatabase.get().reset();
-    cellList.setVisibleRangeAndClearData(
-        new Range(0, INITIAL_PAGE_SIZE), false);
+    cellList.setVisibleRangeAndClearData(new Range(0, INITIAL_PAGE_SIZE), true);
   }
 }

@@ -48,7 +48,7 @@ public class ShowMorePagerPanel extends AbstractPager {
    */
   private final ScrollPanel scrollable = new ScrollPanel();
 
-  private int lastMaxScrollPosWhenMoreDataWasRequested;
+  private int lastMaxScrollPosWhenMoreRangeChanged;
 
   /**
    * Construct a new {@link ShowMorePagerPanel}.
@@ -77,7 +77,7 @@ public class ShowMorePagerPanel extends AbstractPager {
         
         // Don't try to load more data if we haven't successfully scrolled down due to data
         // unavailability
-        if (maxScrollPos == lastMaxScrollPosWhenMoreDataWasRequested) {
+        if (maxScrollPos == lastMaxScrollPosWhenMoreRangeChanged) {
           return;
         }
         
@@ -89,7 +89,6 @@ public class ShowMorePagerPanel extends AbstractPager {
               display.getVisibleRange().getLength() + incrementSize,
               display.getRowCount());
           display.setVisibleRange(0, newPageSize);
-          lastMaxScrollPosWhenMoreDataWasRequested = maxScrollPos;
         }
       }
     });
@@ -124,5 +123,7 @@ public class ShowMorePagerPanel extends AbstractPager {
 
   @Override
   protected void onRangeOrRowCountChanged() {
+    lastMaxScrollPosWhenMoreRangeChanged = 
+        scrollable.getMaximumVerticalScrollPosition();
   }
 }

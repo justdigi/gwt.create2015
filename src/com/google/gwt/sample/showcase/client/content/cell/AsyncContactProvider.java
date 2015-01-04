@@ -46,7 +46,7 @@ public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
           updateRowData(display, 0, contacts);
         }
         loadingStatus.setVisible(false);
-        if (requestCount == 1) {
+        if (Settings.get().getFollowUpFetching() && requestCount == 1) {
           display.setVisibleRange(
               display.getVisibleRange().getStart(), 
               display.getVisibleRange().getLength() + 20);

@@ -21,6 +21,7 @@ class Settings {
   }
   
   private ObservableBoolean predictiveScrolling = new ObservableBoolean(false);
+  private ObservableBoolean followUpFetching = new ObservableBoolean(false);
   
   Settings() {
     History.addValueChangeHandler(new HistoryChangeHandler());
@@ -32,26 +33,45 @@ class Settings {
 
   void setPredictiveScrolling(Boolean value) {
     if (predictiveScrolling.setValue(value)) {
-      String historyToken = History.getToken();
-      int startOfParams = historyToken.indexOf("?");
-      String widgetToken, params;
-      if (startOfParams == -1) {
-        widgetToken = historyToken;
-        params = "";
-      } else {
-        widgetToken = historyToken.substring(0, startOfParams);
-        params = historyToken.substring(
-            startOfParams + 1, historyToken.length());
-      }
-      params = params.replaceAll("ps=.", "");
-      params += value ? "ps=1" : "ps=0";
-      History.replaceItem(widgetToken + "?" + params, false);
+      updateHistoryForParam("ps", value);
     }
   }
 
   HandlerRegistration addPredictiveScrollingValueChangeHandler(
       ValueChangeHandler<Boolean> handler) {
     return predictiveScrolling.addValueChangeHandler(handler);
+  }
+  
+  boolean getFollowUpFetching() {
+    return followUpFetching.getValue();
+  }
+
+  void setFollowUpFetching(Boolean value) {
+    if (followUpFetching.setValue(value)) {
+      updateHistoryForParam("ff", value);
+    }
+  }
+
+  HandlerRegistration addFollowUpFetchingValueChangeHandler(
+      ValueChangeHandler<Boolean> handler) {
+    return followUpFetching.addValueChangeHandler(handler);
+  }
+  
+  private void updateHistoryForParam(String key, boolean value) {
+    String historyToken = History.getToken();
+    int startOfParams = historyToken.indexOf("?");
+    String widgetToken, params;
+    if (startOfParams == -1) {
+      widgetToken = historyToken;
+      params = "";
+    } else {
+      widgetToken = historyToken.substring(0, startOfParams);
+      params = historyToken.substring(
+          startOfParams + 1, historyToken.length());
+    }
+    params = params.replaceAll(key + "=.", "");
+    params += value ? key + "=1" : key + "=0";
+    History.replaceItem(widgetToken + "?" + params, false);
   }
 
   private final class HistoryChangeHandler 
