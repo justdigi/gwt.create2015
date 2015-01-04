@@ -43,6 +43,10 @@
               key='cwCellListGenerateButton'>Generate 50 Contacts</ui:msg>
           </g:Button>
         </td>
+        <td valign="top">
+          <g:CheckBox ui:field="predictiveScrollingCheckbox"/>
+          Predictive scrolling
+        </td>
       </tr>
       <tr>
         <td
