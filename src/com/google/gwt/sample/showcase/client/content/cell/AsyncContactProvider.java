@@ -1,6 +1,7 @@
 package com.google.gwt.sample.showcase.client.content.cell;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -10,14 +11,14 @@ import com.google.gwt.sample.showcase.client.content.cell.ContactDatabase.Contac
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.RootLayoutPanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.AbstractDataProvider;
 import com.google.gwt.view.client.HasData;
 
 public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
 
   private final ArrayList<ContactInfo> contacts = new ArrayList<ContactInfo>();
-  private final Widget loadingStatus = new Label("Loading...");
+  private final Label loadingStatus = new Label("Loading...");
+  private int requestCount;
 
   public AsyncContactProvider() {
     installLoadingIndicator();
@@ -35,6 +36,7 @@ public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
 
   @Override
   protected void onRangeChanged(final HasData<ContactInfo> display) {
+    requestCount++;
     Timer timer = new Timer() {
       @Override
       public void run() {
@@ -44,46 +46,41 @@ public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
           updateRowData(display, 0, contacts);
         }
         loadingStatus.setVisible(false);
+        if (requestCount == 1) {
+          display.setVisibleRange(
+              display.getVisibleRange().getStart(), 
+              display.getVisibleRange().getLength() + 20);
+        }
       }
     };
     loadingStatus.setVisible(true);
-    timer.schedule(1000);
+    loadingStatus.setText("RPC " + requestCount + "...");
+    timer.schedule(requestCount == 1 ? 4000 : 2000);
   }
 
   public void refresh() {
     updateRowData(0, contacts);
   }
 
+  public void reset() {
+    requestCount = 0;
+    updateRowData(0, Collections.<ContactInfo> emptyList());
+  }
+  
   public void add(final ContactInfo contact) {
-    Timer timer = new Timer() {
-      @Override
-      public void run() {
-        contacts.add(contact);
-        int start = contacts.size() - 1;
-        updateRowData(start, contacts.subList(start, start + 1));
-        updateRowCount(contacts.size(), true);
-        loadingStatus.setVisible(false);
-      }
-    };
-    loadingStatus.setVisible(true);
-    timer.schedule(1000);
+    contacts.add(contact);
+    int start = contacts.size() - 1;
+    updateRowData(start, contacts.subList(start, start + 1));
+    updateRowCount(contacts.size(), true);
   }
 
   public void remove(ContactInfo contact) {
-    final int index = contacts.indexOf(contact);
+    int index = contacts.indexOf(contact);
     if (index == -1) {
       return;
     }
-    Timer timer = new Timer() {
-      @Override
-      public void run() {        
-        contacts.remove(index);        
-        updateRowData(index, contacts.subList(index, contacts.size()));
-        updateRowCount(contacts.size(), true);
-        loadingStatus.setVisible(false);
-      }
-    };
-    loadingStatus.setVisible(true);
-    timer.schedule(1000);
+    contacts.remove(index);        
+    updateRowData(index, contacts.subList(index, contacts.size()));
+    updateRowCount(contacts.size(), true);
   }
 }

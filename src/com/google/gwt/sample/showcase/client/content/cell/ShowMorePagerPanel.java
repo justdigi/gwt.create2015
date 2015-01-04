@@ -81,8 +81,8 @@ public class ShowMorePagerPanel extends AbstractPager {
           return;
         }
         
-        double scrollThreshold = Settings.predictiveScrolling 
-            ? .9 * maxScrollPos : maxScrollPos;
+        double scrollThreshold = Settings.get().getPredictiveScrolling()
+            ? .7 * maxScrollPos : maxScrollPos;
         if (lastScrollPos >= scrollThreshold) {
           // We are near the end, so increase the page size.
           final int newPageSize = Math.min(

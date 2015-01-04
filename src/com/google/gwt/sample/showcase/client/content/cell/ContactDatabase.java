@@ -15,22 +15,18 @@
  */
 package com.google.gwt.sample.showcase.client.content.cell;
 
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.i18n.client.Constants;
-import com.google.gwt.user.client.Random;
-import com.google.gwt.user.client.ui.UIObject;
-import com.google.gwt.view.client.AbstractDataProvider;
-import com.google.gwt.view.client.HasData;
-import com.google.gwt.view.client.ListDataProvider;
-import com.google.gwt.view.client.ProvidesKey;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.user.client.Random;
+import com.google.gwt.view.client.HasData;
+import com.google.gwt.view.client.ProvidesKey;
 
 /**
  * The data source for contact information used in the sample.
@@ -499,4 +495,7 @@ public class ContactDatabase {
     return array[Random.nextInt(array.length)];
   }
 
+  public void reset() {
+    dataProvider.reset();
+  }
 }

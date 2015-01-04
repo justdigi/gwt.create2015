@@ -21,6 +21,7 @@ import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
@@ -41,6 +42,7 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
+import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -51,6 +53,8 @@ import com.google.gwt.view.client.SingleSelectionModel;
     "ContactDatabase.java", "CwCellList.ui.xml", "ContactInfoForm.java",
     "ShowMorePagerPanel.java", "RangeLabelPager.java"})
 public class CwCellList extends ContentWidget {
+
+  private static final int INITIAL_PAGE_SIZE = 30;
 
   /**
    * The UiBinder interface used by this example.
@@ -146,6 +150,9 @@ public class CwCellList extends ContentWidget {
   @UiField
   CheckBox predictiveScrollingCheckbox;
 
+  @UiField
+  Button reload;
+
   /**
    * The CellList.
    */
@@ -179,7 +186,7 @@ public class CwCellList extends ContentWidget {
     // change.
     cellList = new CellList<ContactInfo>(contactCell,
         ContactDatabase.ContactInfo.KEY_PROVIDER);
-    cellList.setPageSize(30);
+    cellList.setPageSize(INITIAL_PAGE_SIZE);
     cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
     cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
@@ -213,7 +220,14 @@ public class CwCellList extends ContentWidget {
         ContactDatabase.get().generateContacts(50);
       }
     });
-
+    
+    Settings.get().addPredictiveScrollingValueChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            predictiveScrollingCheckbox.setValue(event.getValue());
+          }
+        });
     return widget;
   }
 
@@ -232,8 +246,15 @@ public class CwCellList extends ContentWidget {
   }
   
   @UiHandler("predictiveScrollingCheckbox")
-  protected void onPredictiveScrollingCheckboxClick(
+  protected void onPredictiveScrollingCheckboxChange(
       ValueChangeEvent<Boolean> event) {
-    Settings.predictiveScrolling = event.getValue();
+    Settings.get().setPredictiveScrolling(event.getValue());
+  }
+  
+  @UiHandler("reload")
+  protected void onReload(ClickEvent event) {
+    ContactDatabase.get().reset();
+    cellList.setVisibleRangeAndClearData(
+        new Range(0, INITIAL_PAGE_SIZE), false);
   }
 }

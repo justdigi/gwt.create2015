@@ -15,6 +15,10 @@
  */
 package com.google.gwt.sample.showcase.client;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import com.google.gwt.core.client.EntryPoint;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.prefetch.Prefetcher;
@@ -38,10 +42,6 @@ import com.google.gwt.user.client.ui.RootLayoutPanel;
 import com.google.gwt.user.client.ui.RootPanel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
 
 /**
  * Entry point classes define <code>onModuleLoad()</code>.
@@ -150,8 +150,13 @@ public class Showcase implements EntryPoint {
         String>() {
       public void onValueChange(ValueChangeEvent<String> event) {
         // Get the content widget associated with the history token.
+        String historyToken = event.getValue();
+        int endOfWidgetToken = historyToken.indexOf("?");
+        if (endOfWidgetToken == -1) {
+          endOfWidgetToken = historyToken.length();
+        }
         ContentWidget contentWidget = treeModel.getContentWidgetForToken(
-            event.getValue());
+            historyToken.substring(0, endOfWidgetToken));
         if (contentWidget == null) {
           return;
         }
