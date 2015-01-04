@@ -15,15 +15,10 @@
  */
 package com.google.gwt.sample.showcase.client.content.cell;
 
-import com.google.gwt.dom.client.DivElement;
-import com.google.gwt.dom.client.Style.Display;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.user.cellview.client.AbstractPager;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.ScrollPanel;
-import com.google.gwt.user.client.ui.UIObject;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasRows;
 
@@ -53,6 +48,8 @@ public class ShowMorePagerPanel extends AbstractPager {
    */
   private final ScrollPanel scrollable = new ScrollPanel();
 
+  private int lastMaxScrollPosWhenMoreDataWasRequested;
+
   /**
    * Construct a new {@link ShowMorePagerPanel}.
    */
@@ -76,14 +73,21 @@ public class ShowMorePagerPanel extends AbstractPager {
         if (display == null) {
           return;
         }
-        int maxScrollTop = scrollable.getWidget().getOffsetHeight()
-            - scrollable.getOffsetHeight();
-        if (lastScrollPos >= maxScrollTop) {
+        int maxScrollPos = scrollable.getMaximumVerticalScrollPosition();
+        
+        // Don't try to load more data if we haven't successfully scrolled down due to data
+        // unavailability
+        if (maxScrollPos == lastMaxScrollPosWhenMoreDataWasRequested) {
+          return;
+        }
+        
+        if (lastScrollPos >= .9 * maxScrollPos) {
           // We are near the end, so increase the page size.
           final int newPageSize = Math.min(
               display.getVisibleRange().getLength() + incrementSize,
               display.getRowCount());
           display.setVisibleRange(0, newPageSize);
+          lastMaxScrollPosWhenMoreDataWasRequested = maxScrollPos;
         }
       }
     });
