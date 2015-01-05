@@ -1,5 +1,7 @@
 package com.google.gwt.sample.showcase.client.content.cell;
 
+import java.util.LinkedList;
+
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -20,8 +22,10 @@ class Settings {
     return instance;
   }
   
-  private ObservableBoolean predictiveScrolling = new ObservableBoolean(false);
-  private ObservableBoolean followUpFetching = new ObservableBoolean(false);
+  private ObservableBoolean predictiveScrolling = 
+      new ObservableBoolean("ps", false);
+  private ObservableBoolean followUpFetching = 
+      new ObservableBoolean("ff", false);
   
   Settings() {
     History.addValueChangeHandler(new HistoryChangeHandler());
@@ -33,7 +37,7 @@ class Settings {
 
   void setPredictiveScrolling(Boolean value) {
     if (predictiveScrolling.setValue(value)) {
-      updateHistoryForParam("ps", value);
+      updateHistory();
     }
   }
 
@@ -48,7 +52,7 @@ class Settings {
 
   void setFollowUpFetching(Boolean value) {
     if (followUpFetching.setValue(value)) {
-      updateHistoryForParam("ff", value);
+      updateHistory();
     }
   }
 
@@ -57,21 +61,44 @@ class Settings {
     return followUpFetching.addValueChangeHandler(handler);
   }
   
-  private void updateHistoryForParam(String key, boolean value) {
+  private void updateHistory() {
+    updateHistory(followUpFetching, predictiveScrolling);
+  }
+  
+  private void updateHistory(ObservableBoolean... settings) {
+    LinkedList<ObservableBoolean> nonDefaults = 
+        removeThoseWithDefaultValues(settings);
+    if (nonDefaults.isEmpty()) {
+      updateHistoryForParams("");
+      return;
+    }
+    StringBuilder sb = new StringBuilder();
+    sb.append(nonDefaults.pop().toString());
+    while (!nonDefaults.isEmpty()) {      
+      sb.append("&");
+      sb.append(nonDefaults.pop().toString());
+    }
+    updateHistoryForParams(sb.toString());
+  }
+  
+  private LinkedList<ObservableBoolean> removeThoseWithDefaultValues(
+      ObservableBoolean... settings) {
+    LinkedList<ObservableBoolean> result = new LinkedList<ObservableBoolean>();
+    for (ObservableBoolean setting : settings) {
+      if (!setting.isDefault()) {
+        result.add(setting);
+      }
+    }
+    return result;
+  }
+  
+  private void updateHistoryForParams(String params) {
     String historyToken = History.getToken();
     int startOfParams = historyToken.indexOf("?");
-    String widgetToken, params;
-    if (startOfParams == -1) {
-      widgetToken = historyToken;
-      params = "";
-    } else {
-      widgetToken = historyToken.substring(0, startOfParams);
-      params = historyToken.substring(
-          startOfParams + 1, historyToken.length());
-    }
-    params = params.replaceAll(key + "=.", "");
-    params += value ? key + "=1" : key + "=0";
-    History.replaceItem(widgetToken + "?" + params, false);
+    String widgetToken = (startOfParams == -1)
+        ? historyToken : historyToken.substring(0, startOfParams);
+    History.replaceItem(
+        widgetToken + (params.isEmpty() ? "" : "?" + params), false);
   }
 
   private final class HistoryChangeHandler 
@@ -81,11 +108,8 @@ class Settings {
       String historyToken = event.getValue();
       
       // Parse the history token
-      if (historyToken.contains("ps=1")) {
-        setPredictiveScrolling(true);
-      } else if (historyToken.contains("ps=0")) {
-        setPredictiveScrolling(false);
-      }
+      predictiveScrolling.updateValueFromQueryString(historyToken);
+      followUpFetching.updateValueFromQueryString(historyToken);
     }
   }
   
@@ -93,13 +117,21 @@ class Settings {
       implements HasValueChangeHandlers<Boolean> {
     
     private EventBus eventBus = new SimpleEventBus();
+    private String key;
+    private boolean defaultValue;
     private boolean value;
 
-    ObservableBoolean(boolean value) {
-      this.value = value;
+    ObservableBoolean(String key, boolean defaultValue) {
+      this.key = key;
+      this.defaultValue = defaultValue;
+      this.value = defaultValue;
     }
     
-    public boolean getValue() {
+    boolean isDefault() {
+      return value == defaultValue;
+    }
+    
+    boolean getValue() {
       return value;
     }
 
@@ -110,6 +142,16 @@ class Settings {
       return value != oldValue;
     }
 
+    void updateValueFromQueryString(String query) {
+      if (query.contains(createOpposite().toString())) {
+        setValue(!value);
+      }
+    }
+    
+    ObservableBoolean createOpposite() {
+      return new ObservableBoolean(key, !value);
+    }
+    
     @Override
     public void fireEvent(GwtEvent<?> event) {
       eventBus.fireEvent(event);
@@ -119,6 +161,11 @@ class Settings {
     public HandlerRegistration addValueChangeHandler(
         ValueChangeHandler<Boolean> handler) {
       return eventBus.addHandler(ValueChangeEvent.getType(), handler);
+    }
+    
+    @Override
+    public String toString() {
+      return key + "=" + (value ? "1" : "0");
     }
   }
 }
