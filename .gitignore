@@ -29,4 +29,5 @@ www-test/
 
 # Eclipse project file needs to be generated on each install per instructions in README.txt
 .project
+.classpath
 Showcase.launch
