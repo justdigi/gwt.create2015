@@ -28,11 +28,14 @@ class Settings {
       new ObservableBoolean("ff", false);
   private ObservableBoolean conservativeStart = 
       new ObservableBoolean("cs", false);
+  private ObservableBoolean windowFilling = 
+      new ObservableBoolean("wf", false);
   
   private ObservableBoolean[] observables = new ObservableBoolean[] {
       followUpFetching, 
       predictiveScrolling, 
-      conservativeStart   
+      conservativeStart,
+      windowFilling
   };
   
   Settings() {

@@ -7,17 +7,17 @@ import com.google.gwt.user.client.Window;
 
 class WindowFiller {
 
-  private CellList<?> cellList;
-
-  public WindowFiller(CellList<?> cellList) {
-    this.cellList = cellList;
-  }
-
-  void start() {
-    Window.addResizeHandler(new Handler());
+  static void install(CellList<?> cellList) {
+    Window.addResizeHandler(new Handler(cellList));
   }
   
-  private class Handler implements ResizeHandler {
+  private static class Handler implements ResizeHandler {
+    
+    private CellList<?> cellList;
+    
+    public Handler(CellList<?> cellList) {
+      this.cellList = cellList;
+    }
     
     @Override
     public void onResize(ResizeEvent event) {

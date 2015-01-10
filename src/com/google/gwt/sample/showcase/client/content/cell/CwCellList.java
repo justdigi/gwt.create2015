@@ -225,7 +225,7 @@ public class CwCellList extends ContentWidget {
       }
     });
     
-    new WindowFiller(cellList).start();
+    WindowFiller.install(cellList);
     
     Settings.get().addPredictiveScrollingValueChangeHandler(
         new ValueChangeHandler<Boolean>() {
