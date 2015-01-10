@@ -29,6 +29,12 @@ class Settings {
   private ObservableBoolean conservativeStart = 
       new ObservableBoolean("cs", false);
   
+  private ObservableBoolean[] observables = new ObservableBoolean[] {
+      followUpFetching, 
+      predictiveScrolling, 
+      conservativeStart   
+  };
+  
   Settings() {
     History.addValueChangeHandler(new HistoryChangeHandler());
   }
@@ -79,12 +85,8 @@ class Settings {
   }
   
   private void updateHistory() {
-    updateHistory(followUpFetching, predictiveScrolling, conservativeStart);
-  }
-  
-  private void updateHistory(ObservableBoolean... settings) {
     LinkedList<ObservableBoolean> nonDefaults = 
-        removeThoseWithDefaultValues(settings);
+        removeThoseWithDefaultValues(observables);
     if (nonDefaults.isEmpty()) {
       updateHistoryForParams("");
       return;
@@ -122,11 +124,10 @@ class Settings {
       implements ValueChangeHandler<String> {
     @Override
     public void onValueChange(ValueChangeEvent<String> event) {
-      String historyToken = event.getValue();
-      
       // Parse the history token
-      predictiveScrolling.updateValueFromQueryString(historyToken);
-      followUpFetching.updateValueFromQueryString(historyToken);
+      for (ObservableBoolean setting : observables) {
+        setting.updateValueFromQueryString(event.getValue());
+      }
     }
   }
   
