@@ -11,6 +11,9 @@ class WindowFiller {
 
   public WindowFiller(CellList<?> cellList) {
     this.cellList = cellList;
+  }
+
+  void start() {
     Window.addResizeHandler(new Handler());
   }
   

@@ -54,8 +54,6 @@ import com.google.gwt.view.client.SingleSelectionModel;
     "ShowMorePagerPanel.java", "RangeLabelPager.java"})
 public class CwCellList extends ContentWidget {
 
-  private static final int INITIAL_PAGE_SIZE = 30;
-
   /**
    * The UiBinder interface used by this example.
    */
@@ -154,6 +152,9 @@ public class CwCellList extends ContentWidget {
   CheckBox followUpFetchingCheckbox;
 
   @UiField
+  CheckBox conservativeStartCheckbox;
+
+  @UiField
   Button reload;
 
   /**
@@ -189,7 +190,7 @@ public class CwCellList extends ContentWidget {
     // change.
     cellList = new CellList<ContactInfo>(contactCell,
         ContactDatabase.ContactInfo.KEY_PROVIDER);
-    cellList.setPageSize(INITIAL_PAGE_SIZE);
+    cellList.setPageSize(getInitialPageSize());
     cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
     cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
@@ -224,6 +225,8 @@ public class CwCellList extends ContentWidget {
       }
     });
     
+    new WindowFiller(cellList).start();
+    
     Settings.get().addPredictiveScrollingValueChangeHandler(
         new ValueChangeHandler<Boolean>() {
           @Override
@@ -237,6 +240,14 @@ public class CwCellList extends ContentWidget {
           @Override
           public void onValueChange(ValueChangeEvent<Boolean> event) {
             followUpFetchingCheckbox.setValue(event.getValue());
+          }
+        });
+
+    Settings.get().addConservativeStartChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            conservativeStartCheckbox.setValue(event.getValue());
           }
         });
 
@@ -269,9 +280,19 @@ public class CwCellList extends ContentWidget {
     Settings.get().setFollowUpFetching(event.getValue());
   }
   
+  @UiHandler("conservativeStartCheckbox")
+  protected void onConservativeStartCheckboxChange(
+      ValueChangeEvent<Boolean> event) {
+    Settings.get().setConservativeStart(event.getValue());
+  }
+  
   @UiHandler("reload")
   protected void onReload(ClickEvent event) {
     ContactDatabase.get().reset();
-    cellList.setVisibleRangeAndClearData(new Range(0, INITIAL_PAGE_SIZE), true);
+    cellList.setVisibleRangeAndClearData(new Range(0, getInitialPageSize()), true);
+  }
+
+  private static int getInitialPageSize() {
+    return Settings.get().getConservativeStart() ? 5 : 30;
   }
 }

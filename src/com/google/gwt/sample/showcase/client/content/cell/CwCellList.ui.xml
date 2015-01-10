@@ -50,6 +50,9 @@
           <g:CheckBox ui:field="predictiveScrollingCheckbox"/>
           Predictive scrolling
           <br />
+          <g:CheckBox ui:field="conservativeStartCheckbox"/>
+          Conservative start
+          <br />
           <br />
           <g:Button ui:field="reload">Reload</g:Button>
         </td>

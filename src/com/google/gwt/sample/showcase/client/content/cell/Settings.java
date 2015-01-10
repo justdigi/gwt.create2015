@@ -26,6 +26,8 @@ class Settings {
       new ObservableBoolean("ps", false);
   private ObservableBoolean followUpFetching = 
       new ObservableBoolean("ff", false);
+  private ObservableBoolean conservativeStart = 
+      new ObservableBoolean("cs", false);
   
   Settings() {
     History.addValueChangeHandler(new HistoryChangeHandler());
@@ -61,8 +63,23 @@ class Settings {
     return followUpFetching.addValueChangeHandler(handler);
   }
   
+  boolean getConservativeStart() {
+    return conservativeStart.getValue();
+  }
+
+  void setConservativeStart(Boolean value) {
+    if (conservativeStart.setValue(value)) {
+      updateHistory();
+    }
+  }
+
+  HandlerRegistration addConservativeStartChangeHandler(
+      ValueChangeHandler<Boolean> handler) {
+    return conservativeStart.addValueChangeHandler(handler);
+  }
+  
   private void updateHistory() {
-    updateHistory(followUpFetching, predictiveScrolling);
+    updateHistory(followUpFetching, predictiveScrolling, conservativeStart);
   }
   
   private void updateHistory(ObservableBoolean... settings) {
