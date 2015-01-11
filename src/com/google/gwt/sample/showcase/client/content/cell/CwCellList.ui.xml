@@ -53,6 +53,9 @@
           <g:CheckBox ui:field="conservativeStartCheckbox"/>
           Conservative start
           <br />
+          <g:CheckBox ui:field="windowFillingCheckbox"/>
+          Window filling
+          <br />
           <br />
           <g:Button ui:field="reload">Reload</g:Button>
         </td>

@@ -155,6 +155,9 @@ public class CwCellList extends ContentWidget {
   CheckBox conservativeStartCheckbox;
 
   @UiField
+  CheckBox windowFillingCheckbox;
+
+  @UiField
   Button reload;
 
   /**
@@ -250,6 +253,13 @@ public class CwCellList extends ContentWidget {
             conservativeStartCheckbox.setValue(event.getValue());
           }
         });
+    Settings.get().addWindowFillingChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            windowFillingCheckbox.setValue(event.getValue());
+          }
+        });
 
     return widget;
   }
@@ -284,6 +294,12 @@ public class CwCellList extends ContentWidget {
   protected void onConservativeStartCheckboxChange(
       ValueChangeEvent<Boolean> event) {
     Settings.get().setConservativeStart(event.getValue());
+  }
+  
+  @UiHandler("windowFillingCheckbox")
+  protected void onWindowFillingCheckboxChange(
+      ValueChangeEvent<Boolean> event) {
+    Settings.get().setWindowFilling(event.getValue());
   }
   
   @UiHandler("reload")

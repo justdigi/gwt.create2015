@@ -87,6 +87,21 @@ class Settings {
     return conservativeStart.addValueChangeHandler(handler);
   }
   
+  boolean getWindowFilling() {
+    return windowFilling.getValue();
+  }
+
+  void setWindowFilling(Boolean value) {
+    if (windowFilling.setValue(value)) {
+      updateHistory();
+    }
+  }
+
+  HandlerRegistration addWindowFillingChangeHandler(
+      ValueChangeHandler<Boolean> handler) {
+    return windowFilling.addValueChangeHandler(handler);
+  }
+  
   private void updateHistory() {
     LinkedList<ObservableBoolean> nonDefaults = 
         removeThoseWithDefaultValues(observables);
