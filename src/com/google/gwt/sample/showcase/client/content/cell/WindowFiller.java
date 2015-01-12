@@ -1,5 +1,7 @@
 package com.google.gwt.sample.showcase.client.content.cell;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.logical.shared.ResizeEvent;
 import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.user.cellview.client.CellList;
@@ -37,16 +39,28 @@ class WindowFiller {
         return;
       }
       if (event.getLoadingState() == 
-          LoadingStateChangeEvent.LoadingState.LOADED
-          && (cellList.getVisibleItemCount() < cellList.getRowCount())) {
-        maybeExtend();
+          LoadingStateChangeEvent.LoadingState.LOADING) {
+        return;
+      }
+      if (cellList.getVisibleItemCount() < cellList.getRowCount()) {
+        // Wait for the cell list to finish drawing before adding more.
+        Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+          public void execute() {
+            maybeExtend();
+          }
+        });
       }
     }
 
     private void maybeExtend() {
       if (cellList.getOffsetHeight() < cellList.getParent().getOffsetHeight()) {
+        int visibleItemCount = cellList.getVisibleItemCount();
+        double pixelsPerItem = 
+            cellList.getOffsetHeight() / (double) visibleItemCount;
         cellList.setVisibleRange(
-            cellList.getPageStart(), cellList.getVisibleItemCount() + 20);
+            cellList.getPageStart(), 
+            (int) Math.ceil(
+                cellList.getParent().getOffsetHeight() / pixelsPerItem));
       }
     }   
     
