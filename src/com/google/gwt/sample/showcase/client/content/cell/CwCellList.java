@@ -166,6 +166,9 @@ public class CwCellList extends ContentWidget {
   @ShowcaseData
   private CellList<ContactInfo> cellList;
 
+  private FollowUpFetcher followUpFetcher;
+  private WindowFiller windowFiller;
+
   /**
    * Constructor.
    *
@@ -228,7 +231,8 @@ public class CwCellList extends ContentWidget {
       }
     });
     
-    WindowFiller.install(cellList);
+    followUpFetcher = FollowUpFetcher.install(cellList);
+    windowFiller = WindowFiller.install(cellList);
     
     Settings.get().addPredictiveScrollingValueChangeHandler(
         new ValueChangeHandler<Boolean>() {
@@ -305,6 +309,9 @@ public class CwCellList extends ContentWidget {
   @UiHandler("reload")
   protected void onReload(ClickEvent event) {
     ContactDatabase.get().reset();
+    pagerPanel.reset();
+    followUpFetcher.reset();
+    windowFiller.reset();
     cellList.setVisibleRangeAndClearData(new Range(0, getInitialPageSize()), true);
   }
 

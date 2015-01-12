@@ -10,10 +10,17 @@ import com.google.gwt.user.client.Window;
 
 class WindowFiller {
 
-  static void install(CellList<?> cellList) {
+  private WindowFiller(CellList<?> cellList) {
     Handler handler = new Handler(cellList);
     Window.addResizeHandler(handler);
     cellList.addLoadingStateChangeHandler(handler);
+  }
+  
+  void reset() {
+  }
+  
+  static WindowFiller install(CellList<?> cellList) {
+    return new WindowFiller(cellList);
   }
   
   private static class Handler 
@@ -58,7 +65,7 @@ class WindowFiller {
         double pixelsPerItem = 
             cellList.getOffsetHeight() / (double) visibleItemCount;
         cellList.setVisibleRange(
-            cellList.getPageStart(), 
+            cellList.getVisibleRange().getStart(), 
             (int) Math.ceil(
                 cellList.getParent().getOffsetHeight() / pixelsPerItem));
       }

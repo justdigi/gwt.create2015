@@ -126,4 +126,9 @@ public class ShowMorePagerPanel extends AbstractPager {
     lastMaxScrollPosWhenMoreRangeChanged = 
         scrollable.getMaximumVerticalScrollPosition();
   }
+  
+  void reset() {
+    lastScrollPos = 0;
+    lastMaxScrollPosWhenMoreRangeChanged = 0;
+  }
 }
