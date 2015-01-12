@@ -1,12 +1,18 @@
 package com.google.gwt.sample.showcase.client.content.cell;
 
+import java.util.logging.Logger;
+
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.view.client.Range;
 
 class FollowUpFetcher {
 
-  private boolean alreadyScheduled = false;
+  private static final Logger logger = 
+      Logger.getLogger(FollowUpFetcher.class.getName());
+  
+  private Timer timer;
 
   private FollowUpFetcher(CellList<?> cellList) {
     Handler handler = new Handler(cellList);
@@ -14,7 +20,10 @@ class FollowUpFetcher {
   }
   
   void reset() {
-    alreadyScheduled = false;
+    if (timer != null) {
+      timer.cancel();
+      timer = null;
+    }
   }
   
   static FollowUpFetcher install(CellList<?> cellList) {
@@ -23,6 +32,7 @@ class FollowUpFetcher {
   
   private class Handler implements LoadingStateChangeEvent.Handler {
     
+    private static final int FACTOR_LARGER_THAN_VIEWPORT = 4;
     private CellList<?> cellList;
     
     public Handler(CellList<?> cellList) {
@@ -38,29 +48,39 @@ class FollowUpFetcher {
           LoadingStateChangeEvent.LoadingState.LOADING) {
         return;
       }
-      if (alreadyScheduled) {
+      if (timer != null && timer.isRunning()) {
+        // Another thread requested data while we were waiting, so postpone
+        // until the other request is handled.
+        timer.schedule(250);
+      }
+      if (timer != null && !timer.isRunning()) {
+        // We already did a follow-up fetch, so we're done.
         return;
       }
-      // Wait for the cell list to finish drawing before adding more.
-      Timer timer = new Timer() {
+      timer = new Timer() {
         @Override
         public void run() {
           maybeExtend();
         }
       };
       timer.schedule(250);
-      alreadyScheduled = true;
     }
 
     private void maybeExtend() {
-      if (cellList.getOffsetHeight() < 2 * cellList.getParent().getOffsetHeight()) {
+      logger.info("maybeExtend");
+      if (cellList.getOffsetHeight() 
+          < (FACTOR_LARGER_THAN_VIEWPORT 
+              * cellList.getParent().getOffsetHeight())) {
         int visibleItemCount = cellList.getVisibleItemCount();
         double pixelsPerItem = 
             cellList.getOffsetHeight() / (double) visibleItemCount;
-        cellList.setVisibleRange(
+        Range newRange = new Range(
             cellList.getVisibleRange().getStart(), 
             (int) Math.ceil(
-                2 * cellList.getParent().getOffsetHeight() / pixelsPerItem));
+                FACTOR_LARGER_THAN_VIEWPORT 
+                * cellList.getParent().getOffsetHeight() / pixelsPerItem));
+        logger.info("maybeExtend: setting visible to " + newRange);
+        cellList.setVisibleRange(newRange);
       }
     }   
     
@@ -68,6 +88,4 @@ class FollowUpFetcher {
       return Settings.get().getFollowUpFetching();
     }
   }
-  
-  
 }

@@ -316,6 +316,6 @@ public class CwCellList extends ContentWidget {
   }
 
   private static int getInitialPageSize() {
-    return Settings.get().getConservativeStart() ? 5 : 30;
+    return Settings.get().getConservativeStart() ? 5 : 25;
   }
 }

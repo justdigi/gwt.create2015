@@ -2,6 +2,7 @@ package com.google.gwt.sample.showcase.client.content.cell;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.logging.Logger;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.FontWeight;
@@ -15,6 +16,9 @@ import com.google.gwt.view.client.AbstractDataProvider;
 import com.google.gwt.view.client.HasData;
 
 public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
+
+  private static final Logger logger = 
+      Logger.getLogger(AsyncContactProvider.class.getName());
 
   private final ArrayList<ContactInfo> contacts = new ArrayList<ContactInfo>();
   private final Label loadingStatus = new Label("Loading...");
@@ -38,6 +42,7 @@ public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
   protected void onRangeChanged(final HasData<ContactInfo> display) {
     requestCount++;
     Timer timer = new Timer() {
+      int rc = requestCount;
       @Override
       public void run() {
         int size = contacts.size();
@@ -46,11 +51,13 @@ public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
           updateRowData(display, 0, contacts);
         }
         loadingStatus.setVisible(false);
+        logger.info("...RPC " + rc);
       }
     };
     // Simulate the delay incurred by a remote procedure call.
     loadingStatus.setVisible(true);
     loadingStatus.setText("RPC " + requestCount + "...");
+    logger.info("RPC " + requestCount + "...");
     timer.schedule(requestCount == 1 ? 4000 : 2000);
   }
 
