@@ -44,11 +44,20 @@
           </g:Button>
         </td>
         <td valign="top">
+          <g:CheckBox ui:field="predictiveScrollingCheckbox"/>
+          Predictive scrolling
+          <br />
           <g:CheckBox ui:field="followUpFetchingCheckbox"/>
           Follow-up fetching
           <br />
-          <g:CheckBox ui:field="predictiveScrollingCheckbox"/>
-          Predictive scrolling
+          <g:CheckBox ui:field="conservativeStartCheckbox"/>
+          Conservative start
+          <br />
+          <g:CheckBox ui:field="windowFillingCheckbox"/>
+          Window filling
+          <br />
+          <g:CheckBox ui:field="keyHandlingCheckbox"/>
+          Key Handling
           <br />
           <br />
           <g:Button ui:field="reload">Reload</g:Button>

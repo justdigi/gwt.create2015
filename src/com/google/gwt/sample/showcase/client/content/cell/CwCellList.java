@@ -54,8 +54,6 @@ import com.google.gwt.view.client.SingleSelectionModel;
     "ShowMorePagerPanel.java", "RangeLabelPager.java"})
 public class CwCellList extends ContentWidget {
 
-  private static final int INITIAL_PAGE_SIZE = 30;
-
   /**
    * The UiBinder interface used by this example.
    */
@@ -154,6 +152,15 @@ public class CwCellList extends ContentWidget {
   CheckBox followUpFetchingCheckbox;
 
   @UiField
+  CheckBox conservativeStartCheckbox;
+
+  @UiField
+  CheckBox windowFillingCheckbox;
+  
+  @UiField
+  CheckBox keyHandlingCheckbox;
+
+  @UiField
   Button reload;
 
   /**
@@ -161,6 +168,9 @@ public class CwCellList extends ContentWidget {
    */
   @ShowcaseData
   private CellList<ContactInfo> cellList;
+
+  private FollowUpFetcher followUpFetcher;
+  private WindowFiller windowFiller;
 
   /**
    * Constructor.
@@ -189,8 +199,8 @@ public class CwCellList extends ContentWidget {
     // change.
     cellList = new CellList<ContactInfo>(contactCell,
         ContactDatabase.ContactInfo.KEY_PROVIDER);
-    cellList.setPageSize(INITIAL_PAGE_SIZE);
-    cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
+    cellList.setPageSize(getInitialPageSize());
+    setKeyboardPagingPolicy();
     cellList.setKeyboardSelectionHandler(new PreviewHandler<>(cellList));
     cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
@@ -225,6 +235,9 @@ public class CwCellList extends ContentWidget {
       }
     });
     
+    followUpFetcher = FollowUpFetcher.install(cellList);
+    windowFiller = WindowFiller.install(cellList);
+    
     Settings.get().addPredictiveScrollingValueChangeHandler(
         new ValueChangeHandler<Boolean>() {
           @Override
@@ -238,6 +251,29 @@ public class CwCellList extends ContentWidget {
           @Override
           public void onValueChange(ValueChangeEvent<Boolean> event) {
             followUpFetchingCheckbox.setValue(event.getValue());
+          }
+        });
+
+    Settings.get().addConservativeStartChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            conservativeStartCheckbox.setValue(event.getValue());
+          }
+        });
+    Settings.get().addWindowFillingChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            windowFillingCheckbox.setValue(event.getValue());
+          }
+        });
+    Settings.get().addKeyHandlingChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            keyHandlingCheckbox.setValue(event.getValue());
+            setKeyboardPagingPolicy();
           }
         });
 
@@ -258,6 +294,14 @@ public class CwCellList extends ContentWidget {
     });
   }
   
+  void setKeyboardPagingPolicy() {
+    if (Settings.get().getKeyHandling()) {
+      cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
+    } else {
+      cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+    }
+  }
+
   @UiHandler("predictiveScrollingCheckbox")
   protected void onPredictiveScrollingCheckboxChange(
       ValueChangeEvent<Boolean> event) {
@@ -270,9 +314,35 @@ public class CwCellList extends ContentWidget {
     Settings.get().setFollowUpFetching(event.getValue());
   }
   
+  @UiHandler("conservativeStartCheckbox")
+  protected void onConservativeStartCheckboxChange(
+      ValueChangeEvent<Boolean> event) {
+    Settings.get().setConservativeStart(event.getValue());
+  }
+  
+  @UiHandler("windowFillingCheckbox")
+  protected void onWindowFillingCheckboxChange(
+      ValueChangeEvent<Boolean> event) {
+    Settings.get().setWindowFilling(event.getValue());
+  }
+  
+  @UiHandler("keyHandlingCheckbox")
+  protected void onKeyHandlingCheckboxChange(
+      ValueChangeEvent<Boolean> event) {
+    Settings.get().setKeyHandling(event.getValue());
+    setKeyboardPagingPolicy();
+  }
+  
   @UiHandler("reload")
   protected void onReload(ClickEvent event) {
     ContactDatabase.get().reset();
-    cellList.setVisibleRangeAndClearData(new Range(0, INITIAL_PAGE_SIZE), true);
+    pagerPanel.reset();
+    followUpFetcher.reset();
+    windowFiller.reset();
+    cellList.setVisibleRangeAndClearData(new Range(0, getInitialPageSize()), true);
+  }
+
+  private static int getInitialPageSize() {
+    return Settings.get().getConservativeStart() ? 5 : 15;
   }
 }
