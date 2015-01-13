@@ -32,7 +32,7 @@ class FollowUpFetcher {
   
   private class Handler implements LoadingStateChangeEvent.Handler {
     
-    private static final int FACTOR_LARGER_THAN_VIEWPORT = 4;
+    private static final int FACTOR_LARGER_THAN_VIEWPORT = 3;
     private CellList<?> cellList;
     
     public Handler(CellList<?> cellList) {
