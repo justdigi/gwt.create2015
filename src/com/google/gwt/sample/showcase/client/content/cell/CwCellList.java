@@ -294,6 +294,11 @@ public class CwCellList extends ContentWidget {
     });
   }
   
+  @Override
+  public boolean hasScrollableContent() {
+    return false;
+  }
+
   void setKeyboardPagingPolicy() {
     if (Settings.get().getKeyHandling()) {
       cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
