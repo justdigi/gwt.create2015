@@ -20,7 +20,7 @@ public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
   private static final Logger logger = 
       Logger.getLogger(AsyncContactProvider.class.getName());
 
-  private final ArrayList<ContactInfo> contacts = new ArrayList<ContactInfo>();
+  private final ArrayList<ContactInfo> serverContacts = new ArrayList<ContactInfo>();
   private final Label loadingStatus = new Label("Loading...");
   private int requestCount;
 
@@ -45,10 +45,17 @@ public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
       int rc = requestCount;
       @Override
       public void run() {
-        int size = contacts.size();
+        int size = serverContacts.size();
         if (size > 0) {
           // Do not push data if the data set is empty.
-          updateRowData(display, 0, contacts);
+          updateRowData(
+              display, 
+              0, 
+              serverContacts.subList(
+                  0, 
+                  display.getVisibleRange().getStart() 
+                      + display.getVisibleRange().getLength()));
+          updateRowCount(serverContacts.size(), true);
         }
         loadingStatus.setVisible(false);
         logger.info("...RPC " + rc);
@@ -62,7 +69,7 @@ public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
   }
 
   public void refresh() {
-    updateRowData(0, contacts);
+    updateRowData(0, serverContacts);
   }
 
   public void reset() {
@@ -71,19 +78,14 @@ public class AsyncContactProvider extends AbstractDataProvider<ContactInfo> {
   }
   
   public void add(final ContactInfo contact) {
-    contacts.add(contact);
-    int start = contacts.size() - 1;
-    updateRowData(start, contacts.subList(start, start + 1));
-    updateRowCount(contacts.size(), true);
+    serverContacts.add(contact);
   }
 
   public void remove(ContactInfo contact) {
-    int index = contacts.indexOf(contact);
+    int index = serverContacts.indexOf(contact);
     if (index == -1) {
       return;
     }
-    contacts.remove(index);        
-    updateRowData(index, contacts.subList(index, contacts.size()));
-    updateRowCount(contacts.size(), true);
+    serverContacts.remove(index);        
   }
 }
