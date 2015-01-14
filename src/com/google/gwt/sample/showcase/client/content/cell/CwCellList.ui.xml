@@ -57,9 +57,11 @@
           <g:CheckBox ui:field="followUpFetchingCheckbox"/>
           Follow-up fetching
           <br />
-          <g:CheckBox ui:field="conservativeStartCheckbox"/>
-          Conservative start
-          <br />
+          <g:HTMLPanel visible="false">
+	          <g:CheckBox ui:field="conservativeStartCheckbox"/>
+	          Conservative start
+	          <br />
+          </g:HTMLPanel>
           <g:CheckBox ui:field="windowFillingCheckbox"/>
           Window filling
           <br />
