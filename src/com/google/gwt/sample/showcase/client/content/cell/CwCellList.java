@@ -201,7 +201,7 @@ public class CwCellList extends ContentWidget {
         ContactDatabase.ContactInfo.KEY_PROVIDER);
     cellList.setPageSize(getInitialPageSize());
     setKeyboardPagingPolicy();
-    cellList.setKeyboardSelectionHandler(new PreviewHandler<>(cellList));
+    cellList.setKeyboardSelectionHandler(new CustomKeyboardHandler<>(cellList));
     cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
     // Add a selection model so we can select cells.
