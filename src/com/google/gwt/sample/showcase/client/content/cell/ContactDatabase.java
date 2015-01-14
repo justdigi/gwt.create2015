@@ -321,6 +321,7 @@ public class ContactDatabase {
   private final AsyncContactProvider dataProvider = new AsyncContactProvider();
 
   private final Category[] categories;
+  private final Category selfCategory = new Category("me");
 
   /**
    * The map of contacts to her friends.
@@ -469,7 +470,11 @@ public class ContactDatabase {
   
   ContactInfo createContactForMe() {
     // TODO: use i18n resources for these strings
-    return createContactFrom("My", "Info", new Category("me"));
+    return createContactFrom("My", "Info", getCategoryForMe());
+  }
+  
+  Category getCategoryForMe() {
+    return selfCategory;
   }
 
   @SuppressWarnings("deprecation")

@@ -1,5 +1,7 @@
 package com.google.gwt.sample.showcase.client.content.cell;
 
+import javax.annotation.Nullable;
+
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.dom.client.Document;
@@ -13,6 +15,8 @@ import com.google.gwt.user.client.ui.Widget;
 class SimpleContactView extends Widget {
 
   private final Cell<ContactInfo> cell;
+  
+  @Nullable private ContactInfo contact;
 
   SimpleContactView(Cell<ContactInfo> cell) {
     this.cell = cell;
@@ -21,11 +25,17 @@ class SimpleContactView extends Widget {
   }
   
   void setContact(ContactInfo contact) {
+    this.contact = contact;
     Context cellContext = new Context(0, 0, contact); // contact is its own key
 
     SafeHtmlBuilder htmlBuilder = new SafeHtmlBuilder();
     cell.render(cellContext, contact, htmlBuilder);
 
     getElement().setInnerSafeHtml(htmlBuilder.toSafeHtml());
+  }
+  
+  @Nullable
+  ContactInfo getContact() {
+    return contact;
   }
 }

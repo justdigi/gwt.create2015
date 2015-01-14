@@ -34,9 +34,9 @@
           valign='top'
           align='center'
           style="height: 100%">
-          <s:SimpleContactView
+          <g:FocusPanel
             addStyleNames='{style.selfContact}'
-            ui:field='selfContactView' />
+            ui:field='selfContactContainer' />
           <br />
           <s:ShowMorePagerPanel
             addStyleNames='{style.scrollable}'

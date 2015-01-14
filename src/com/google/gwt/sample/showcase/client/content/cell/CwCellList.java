@@ -20,6 +20,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.Constants;
@@ -42,6 +45,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -145,9 +149,6 @@ public class CwCellList extends ContentWidget {
   @UiField
   RangeLabelPager rangeLabelPager;
 
-  @UiField(provided = true)
-  SimpleContactView selfContactView;
-
   @UiField
   CheckBox predictiveScrollingCheckbox;
 
@@ -162,6 +163,11 @@ public class CwCellList extends ContentWidget {
   
   @UiField
   CheckBox keyHandlingCheckbox;
+
+  @UiField
+  FocusPanel selfContactContainer;
+
+  private SimpleContactView selfContactView; 
 
   /**
    * The CellList.
@@ -191,10 +197,6 @@ public class CwCellList extends ContentWidget {
     // Create a CellList.
     ContactCell contactCell = new ContactCell(images.contact());
     
-    // Use the same cell to create a widget to show a contact for the user
-    selfContactView = new SimpleContactView(contactCell);
-    selfContactView.setContact(ContactDatabase.get().createContactForMe());
-
     // Set a key provider that provides a unique key for each contact. If key is
     // used to identify contacts when fields (such as the name and address)
     // change.
@@ -220,6 +222,26 @@ public class CwCellList extends ContentWidget {
     // Create the UiBinder.
     Binder uiBinder = GWT.create(Binder.class);
     Widget widget = uiBinder.createAndBindUi(this);
+
+    // Use the same cell to create a widget to show a contact for the user
+    selfContactView = new SimpleContactView(contactCell);
+    selfContactView.setContact(ContactDatabase.get().createContactForMe());
+    selfContactContainer.setWidget(selfContactView);
+    selfContactContainer.addKeyDownHandler(new KeyDownHandler() {
+      @Override
+      public void onKeyDown(KeyDownEvent event) {
+        if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+          contactForm.setContact(selfContactView.getContact());
+        }
+      }
+    });
+    selfContactContainer.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+        // We always set the self contact, so we can count on it not being null
+        contactForm.setContact(selfContactView.getContact());
+      }
+    });
 
     // Add the CellList to the data provider in the database.
     ContactDatabase.get().addDataDisplay(cellList);
