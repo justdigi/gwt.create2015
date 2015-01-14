@@ -15,11 +15,15 @@
  */
 package com.google.gwt.sample.showcase.client.content.cell;
 
+import java.util.concurrent.Callable;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
@@ -227,17 +231,9 @@ public class CwCellList extends ContentWidget {
     selfContactView = new SimpleContactView(contactCell);
     selfContactView.setContact(ContactDatabase.get().createContactForMe());
     selfContactContainer.setWidget(selfContactView);
-    selfContactContainer.addKeyDownHandler(new KeyDownHandler() {
+    addSelectHandlers(selfContactContainer, new Runnable() {
       @Override
-      public void onKeyDown(KeyDownEvent event) {
-        if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
-          contactForm.setContact(selfContactView.getContact());
-        }
-      }
-    });
-    selfContactContainer.addClickHandler(new ClickHandler() {
-      @Override
-      public void onClick(ClickEvent event) {
+      public void run() {
         // We always set the self contact, so we can count on it not being null
         contactForm.setContact(selfContactView.getContact());
       }
@@ -254,6 +250,7 @@ public class CwCellList extends ContentWidget {
     rangeLabelPager.setDisplay(cellList);
 
     // Handle events from the generate button.
+    // Buttons fire their click handler when Enter is pressed
     generateButton.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
         ContactDatabase.get().generateContacts(50);
@@ -330,6 +327,24 @@ public class CwCellList extends ContentWidget {
   @Override
   public boolean hasScrollableContent() {
     return false;
+  }
+  
+  private <W extends HasClickHandlers & HasKeyDownHandlers>
+      void addSelectHandlers(W widget, final Runnable handler) {
+    widget.addKeyDownHandler(new KeyDownHandler() {
+      @Override
+      public void onKeyDown(KeyDownEvent event) {
+        if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+          handler.run();
+        }
+      }
+    });
+    widget.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+        handler.run();
+      }
+    });
   }
 
   void setKeyboardPagingPolicy() {
