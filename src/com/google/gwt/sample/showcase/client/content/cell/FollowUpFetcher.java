@@ -2,6 +2,7 @@ package com.google.gwt.sample.showcase.client.content.cell;
 
 import java.util.logging.Logger;
 
+import com.google.gwt.sample.showcase.client.Settings;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent;
 import com.google.gwt.user.client.Timer;

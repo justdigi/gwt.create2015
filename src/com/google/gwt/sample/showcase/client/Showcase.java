@@ -134,13 +134,19 @@ public class Showcase implements EntryPoint {
     // Always prefetch.
     Prefetcher.start();
 
+    // Make sure Settings are getting synced with history at the very start.
+    Settings.get().ensureUpdatesOnHistoryChange();
+
     // Change the history token when a main menu item is selected.
     selectionModel.addSelectionChangeHandler(
         new SelectionChangeEvent.Handler() {
           public void onSelectionChange(SelectionChangeEvent event) {
             ContentWidget selected = selectionModel.getSelectedObject();
             if (selected != null) {
-              History.newItem(getContentWidgetToken(selected), true);
+              History.newItem(
+                  getContentWidgetToken(selected)
+                      + Settings.get().getHistorySuffix(),
+                  true);
             }
           }
         });

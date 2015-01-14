@@ -1,4 +1,4 @@
-package com.google.gwt.sample.showcase.client.content.cell;
+package com.google.gwt.sample.showcase.client;
 
 import java.util.LinkedList;
 
@@ -11,13 +11,14 @@ import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.SimpleEventBus;
 import com.google.gwt.user.client.History;
 
-class Settings {
+public class Settings {
 
   private static Settings instance;
   
-  static Settings get() {
+  public static Settings get() {
     if (instance == null) {
       instance = new Settings();
+      instance.ensureUpdatesOnHistoryChange();
     }
     return instance;
   }
@@ -36,91 +37,104 @@ class Settings {
       keyHandling
   };
   
-  Settings() {
-    History.addValueChangeHandler(new HistoryChangeHandler());
+  private HandlerRegistration historyHandlerReg;
+  
+  void ensureUpdatesOnHistoryChange() {
+    if (historyHandlerReg != null) {
+      return;
+    }
+    historyHandlerReg = 
+        History.addValueChangeHandler(new HistoryChangeHandler());
   }
   
-  boolean getPredictiveScrolling() {
+  public boolean getPredictiveScrolling() {
     return predictiveScrolling.getValue();
   }
 
-  void setPredictiveScrolling(Boolean value) {
+  public void setPredictiveScrolling(Boolean value) {
     if (predictiveScrolling.setValue(value)) {
       updateHistory();
     }
   }
 
-  HandlerRegistration addPredictiveScrollingValueChangeHandler(
+  public HandlerRegistration addPredictiveScrollingValueChangeHandler(
       ValueChangeHandler<Boolean> handler) {
     return predictiveScrolling.addValueChangeHandler(handler);
   }
   
-  boolean getFollowUpFetching() {
+  public boolean getFollowUpFetching() {
     return followUpFetching.getValue();
   }
 
-  void setFollowUpFetching(Boolean value) {
+  public void setFollowUpFetching(Boolean value) {
     if (followUpFetching.setValue(value)) {
       updateHistory();
     }
   }
 
-  HandlerRegistration addFollowUpFetchingValueChangeHandler(
+  public HandlerRegistration addFollowUpFetchingValueChangeHandler(
       ValueChangeHandler<Boolean> handler) {
     return followUpFetching.addValueChangeHandler(handler);
   }
   
-  boolean getConservativeStart() {
+  public boolean getConservativeStart() {
     return conservativeStart.getValue();
   }
 
-  void setConservativeStart(Boolean value) {
+  public void setConservativeStart(Boolean value) {
     if (conservativeStart.setValue(value)) {
       updateHistory();
     }
   }
 
-  HandlerRegistration addConservativeStartChangeHandler(
+  public HandlerRegistration addConservativeStartChangeHandler(
       ValueChangeHandler<Boolean> handler) {
     return conservativeStart.addValueChangeHandler(handler);
   }
   
-  boolean getWindowFilling() {
+  public boolean getWindowFilling() {
     return windowFilling.getValue();
   }
 
-  void setWindowFilling(Boolean value) {
+  public void setWindowFilling(Boolean value) {
     if (windowFilling.setValue(value)) {
       updateHistory();
     }
   }
 
-  HandlerRegistration addWindowFillingChangeHandler(
+  public HandlerRegistration addWindowFillingChangeHandler(
       ValueChangeHandler<Boolean> handler) {
     return windowFilling.addValueChangeHandler(handler);
   }
   
-  boolean getKeyHandling() {
+  public boolean getKeyHandling() {
     return keyHandling.getValue();
   }
   
-  void setKeyHandling(Boolean value) {
+  public void setKeyHandling(Boolean value) {
     if (keyHandling.setValue(value)) {
       updateHistory();
     }
   }
   
-  HandlerRegistration addKeyHandlingChangeHandler(
+  public HandlerRegistration addKeyHandlingChangeHandler(
       ValueChangeHandler<Boolean> handler) {
     return keyHandling.addValueChangeHandler(handler);
   }
   
   private void updateHistory() {
+    String historyToken = History.getToken();
+    int startOfParams = historyToken.indexOf("?");
+    String widgetToken = (startOfParams == -1)
+        ? historyToken : historyToken.substring(0, startOfParams);
+    History.replaceItem(widgetToken + getHistorySuffix(), false);
+  }
+
+  String getHistorySuffix() {
     LinkedList<ObservableBoolean> nonDefaults = 
         removeThoseWithDefaultValues(observables);
     if (nonDefaults.isEmpty()) {
-      updateHistoryForParams("");
-      return;
+      return "";
     }
     StringBuilder sb = new StringBuilder();
     sb.append(nonDefaults.pop().toString());
@@ -128,7 +142,7 @@ class Settings {
       sb.append("&");
       sb.append(nonDefaults.pop().toString());
     }
-    updateHistoryForParams(sb.toString());
+    return "?" + sb.toString();
   }
   
   private LinkedList<ObservableBoolean> removeThoseWithDefaultValues(
@@ -142,15 +156,6 @@ class Settings {
     return result;
   }
   
-  private void updateHistoryForParams(String params) {
-    String historyToken = History.getToken();
-    int startOfParams = historyToken.indexOf("?");
-    String widgetToken = (startOfParams == -1)
-        ? historyToken : historyToken.substring(0, startOfParams);
-    History.replaceItem(
-        widgetToken + (params.isEmpty() ? "" : "?" + params), false);
-  }
-
   private final class HistoryChangeHandler 
       implements ValueChangeHandler<String> {
     @Override

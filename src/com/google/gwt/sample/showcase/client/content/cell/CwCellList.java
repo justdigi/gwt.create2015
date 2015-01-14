@@ -27,6 +27,7 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.sample.showcase.client.ContentWidget;
+import com.google.gwt.sample.showcase.client.Settings;
 import com.google.gwt.sample.showcase.client.ShowcaseAnnotations.ShowcaseData;
 import com.google.gwt.sample.showcase.client.ShowcaseAnnotations.ShowcaseRaw;
 import com.google.gwt.sample.showcase.client.ShowcaseAnnotations.ShowcaseSource;
@@ -202,11 +203,13 @@ public class CwCellList extends ContentWidget {
     cellList.setPageSize(getInitialPageSize());
     setKeyboardPagingPolicy();
     cellList.setKeyboardSelectionHandler(new CustomKeyboardHandler<>(cellList));
-    cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+    cellList.setKeyboardSelectionPolicy(
+        KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
     // Add a selection model so we can select cells.
-    final SingleSelectionModel<ContactInfo> selectionModel = new SingleSelectionModel<ContactInfo>(
-        ContactDatabase.ContactInfo.KEY_PROVIDER);
+    final SingleSelectionModel<ContactInfo> selectionModel = 
+        new SingleSelectionModel<ContactInfo>(
+            ContactDatabase.ContactInfo.KEY_PROVIDER);
     cellList.setSelectionModel(selectionModel);
     selectionModel.addSelectionChangeHandler(new SelectionChangeEvent.Handler() {
       public void onSelectionChange(SelectionChangeEvent event) {
@@ -245,6 +248,8 @@ public class CwCellList extends ContentWidget {
             predictiveScrollingCheckbox.setValue(event.getValue());
           }
         });
+    predictiveScrollingCheckbox.setValue(
+        Settings.get().getPredictiveScrolling());
     
     Settings.get().addFollowUpFetchingValueChangeHandler(
         new ValueChangeHandler<Boolean>() {
@@ -253,6 +258,7 @@ public class CwCellList extends ContentWidget {
             followUpFetchingCheckbox.setValue(event.getValue());
           }
         });
+    followUpFetchingCheckbox.setValue(Settings.get().getFollowUpFetching());
 
     Settings.get().addConservativeStartChangeHandler(
         new ValueChangeHandler<Boolean>() {
@@ -261,6 +267,8 @@ public class CwCellList extends ContentWidget {
             conservativeStartCheckbox.setValue(event.getValue());
           }
         });
+    conservativeStartCheckbox.setValue(Settings.get().getConservativeStart());
+
     Settings.get().addWindowFillingChangeHandler(
         new ValueChangeHandler<Boolean>() {
           @Override
@@ -268,6 +276,8 @@ public class CwCellList extends ContentWidget {
             windowFillingCheckbox.setValue(event.getValue());
           }
         });
+    windowFillingCheckbox.setValue(Settings.get().getWindowFilling());
+
     Settings.get().addKeyHandlingChangeHandler(
         new ValueChangeHandler<Boolean>() {
           @Override
@@ -276,6 +286,7 @@ public class CwCellList extends ContentWidget {
             setKeyboardPagingPolicy();
           }
         });
+    keyHandlingCheckbox.setValue(Settings.get().getKeyHandling());
 
     return widget;
   }
