@@ -461,18 +461,23 @@ public class ContactDatabase {
    * 
    * @return the new {@link ContactInfo}.
    */
-  @SuppressWarnings("deprecation")
   private ContactInfo createContactInfo() {
-    ContactInfo contact = new ContactInfo(nextValue(categories));
-    contact.setLastName(nextValue(LAST_NAMES));
-    if (Random.nextBoolean()) {
-      // Male.
-      contact.setFirstName(nextValue(MALE_FIRST_NAMES));
-    } else {
-      // Female.
-      contact.setFirstName(nextValue(FEMALE_FIRST_NAMES));
-    }
+    String firstName = Random.nextBoolean()
+        ? nextValue(MALE_FIRST_NAMES) : nextValue(FEMALE_FIRST_NAMES);
+    return createContactFrom(firstName, nextValue(LAST_NAMES), nextValue(categories));
+  }
+  
+  ContactInfo createContactForMe() {
+    // TODO: use i18n resources for these strings
+    return createContactFrom("My", "Info", new Category("me"));
+  }
 
+  @SuppressWarnings("deprecation")
+  private ContactInfo createContactFrom(String firstName, String lastName, Category category) {
+    ContactInfo contact = new ContactInfo(category);
+    contact.setLastName(lastName);
+    contact.setFirstName(firstName);
+    
     // Create a birthday between 20-80 years ago.
     int year = (new Date()).getYear() - 21 - Random.nextInt(61);
     contact.setBirthday(new Date(year, Random.nextInt(12), 1 + Random.nextInt(31)));

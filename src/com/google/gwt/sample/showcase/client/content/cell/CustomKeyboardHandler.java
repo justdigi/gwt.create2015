@@ -14,7 +14,7 @@ import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.CellPreviewEvent;
 
 class CustomKeyboardHandler<T extends ContactInfo> extends DefaultKeyboardSelectionHandler<T> {
-  private static final int PAGE_INCREMENT = 9;
+  private static final int PAGE_INCREMENT = 11;
   private final CellList<T> cellList;  
   private boolean isEndRequestPending = false;
   
