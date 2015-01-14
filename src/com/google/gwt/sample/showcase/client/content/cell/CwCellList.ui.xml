@@ -56,6 +56,9 @@
           <g:CheckBox ui:field="windowFillingCheckbox"/>
           Window filling
           <br />
+          <g:CheckBox ui:field="keyHandlingCheckbox"/>
+          Key Handling
+          <br />
           <br />
           <g:Button ui:field="reload">Reload</g:Button>
         </td>

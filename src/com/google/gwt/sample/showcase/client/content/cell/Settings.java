@@ -22,20 +22,18 @@ class Settings {
     return instance;
   }
   
-  private ObservableBoolean predictiveScrolling = 
-      new ObservableBoolean("ps", false);
-  private ObservableBoolean followUpFetching = 
-      new ObservableBoolean("ff", false);
-  private ObservableBoolean conservativeStart = 
-      new ObservableBoolean("cs", false);
-  private ObservableBoolean windowFilling = 
-      new ObservableBoolean("wf", false);
+  private ObservableBoolean predictiveScrolling = new ObservableBoolean("ps", false);
+  private ObservableBoolean followUpFetching = new ObservableBoolean("ff", false);
+  private ObservableBoolean conservativeStart = new ObservableBoolean("cs", false);
+  private ObservableBoolean windowFilling = new ObservableBoolean("wf", false);
+  private ObservableBoolean keyHandling = new ObservableBoolean("kh", false);
   
   private ObservableBoolean[] observables = new ObservableBoolean[] {
       followUpFetching, 
       predictiveScrolling, 
       conservativeStart,
-      windowFilling
+      windowFilling,
+      keyHandling
   };
   
   Settings() {
@@ -100,6 +98,21 @@ class Settings {
   HandlerRegistration addWindowFillingChangeHandler(
       ValueChangeHandler<Boolean> handler) {
     return windowFilling.addValueChangeHandler(handler);
+  }
+  
+  boolean getKeyHandling() {
+    return keyHandling.getValue();
+  }
+  
+  void setKeyHandling(Boolean value) {
+    if (keyHandling.setValue(value)) {
+      updateHistory();
+    }
+  }
+  
+  HandlerRegistration addKeyHandlingChangeHandler(
+      ValueChangeHandler<Boolean> handler) {
+    return keyHandling.addValueChangeHandler(handler);
   }
   
   private void updateHistory() {

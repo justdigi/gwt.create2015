@@ -28,6 +28,7 @@ import com.google.gwt.view.client.HasRows;
  */
 public class ShowMorePagerPanel extends AbstractPager {
 
+  private static final double THRESHOLD_FRACTION = 0.7;
   /**
    * The default increment size.
    */
@@ -48,7 +49,7 @@ public class ShowMorePagerPanel extends AbstractPager {
    */
   private final ScrollPanel scrollable = new ScrollPanel();
 
-  private int lastMaxScrollPosWhenMoreRangeChanged;
+  private int lastMaxScrollPosWhenRangeChanged;
 
   /**
    * Construct a new {@link ShowMorePagerPanel}.
@@ -77,12 +78,14 @@ public class ShowMorePagerPanel extends AbstractPager {
         
         // Don't try to load more data if we haven't successfully scrolled down due to data
         // unavailability
-        if (maxScrollPos == lastMaxScrollPosWhenMoreRangeChanged) {
+        if (maxScrollPos == lastMaxScrollPosWhenRangeChanged) {
           return;
         }
         
-        double scrollThreshold = Settings.get().getPredictiveScrolling()
-            ? .7 * maxScrollPos : maxScrollPos;
+        
+        boolean predictiveScroll = Settings.get().getPredictiveScrolling();
+        double scrollThreshold = predictiveScroll ? THRESHOLD_FRACTION * maxScrollPos : maxScrollPos;
+
         if (lastScrollPos >= scrollThreshold) {
           // We are near the end, so increase the page size.
           final int newPageSize = Math.min(
@@ -93,7 +96,7 @@ public class ShowMorePagerPanel extends AbstractPager {
       }
     });
   }
-
+  
   /**
    * Get the number of rows by which the range is increased when the scrollbar
    * reaches the bottom.
@@ -123,12 +126,11 @@ public class ShowMorePagerPanel extends AbstractPager {
 
   @Override
   protected void onRangeOrRowCountChanged() {
-    lastMaxScrollPosWhenMoreRangeChanged = 
-        scrollable.getMaximumVerticalScrollPosition();
+    lastMaxScrollPosWhenRangeChanged = scrollable.getMaximumVerticalScrollPosition();
   }
   
   void reset() {
     lastScrollPos = 0;
-    lastMaxScrollPosWhenMoreRangeChanged = 0;
+    lastMaxScrollPosWhenRangeChanged = 0;
   }
 }

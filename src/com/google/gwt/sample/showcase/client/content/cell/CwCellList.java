@@ -156,6 +156,9 @@ public class CwCellList extends ContentWidget {
 
   @UiField
   CheckBox windowFillingCheckbox;
+  
+  @UiField
+  CheckBox keyHandlingCheckbox;
 
   @UiField
   Button reload;
@@ -197,7 +200,8 @@ public class CwCellList extends ContentWidget {
     cellList = new CellList<ContactInfo>(contactCell,
         ContactDatabase.ContactInfo.KEY_PROVIDER);
     cellList.setPageSize(getInitialPageSize());
-    cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+    setKeyboardPagingPolicy();
+    cellList.setKeyboardSelectionHandler(new PreviewHandler<>(cellList));
     cellList.setKeyboardSelectionPolicy(KeyboardSelectionPolicy.BOUND_TO_SELECTION);
 
     // Add a selection model so we can select cells.
@@ -264,6 +268,14 @@ public class CwCellList extends ContentWidget {
             windowFillingCheckbox.setValue(event.getValue());
           }
         });
+    Settings.get().addKeyHandlingChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            keyHandlingCheckbox.setValue(event.getValue());
+            setKeyboardPagingPolicy();
+          }
+        });
 
     return widget;
   }
@@ -282,6 +294,14 @@ public class CwCellList extends ContentWidget {
     });
   }
   
+  void setKeyboardPagingPolicy() {
+    if (Settings.get().getKeyHandling()) {
+      cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.CURRENT_PAGE);
+    } else {
+      cellList.setKeyboardPagingPolicy(KeyboardPagingPolicy.INCREASE_RANGE);
+    }
+  }
+
   @UiHandler("predictiveScrollingCheckbox")
   protected void onPredictiveScrollingCheckboxChange(
       ValueChangeEvent<Boolean> event) {
@@ -304,6 +324,13 @@ public class CwCellList extends ContentWidget {
   protected void onWindowFillingCheckboxChange(
       ValueChangeEvent<Boolean> event) {
     Settings.get().setWindowFilling(event.getValue());
+  }
+  
+  @UiHandler("keyHandlingCheckbox")
+  protected void onKeyHandlingCheckboxChange(
+      ValueChangeEvent<Boolean> event) {
+    Settings.get().setKeyHandling(event.getValue());
+    setKeyboardPagingPolicy();
   }
   
   @UiHandler("reload")
