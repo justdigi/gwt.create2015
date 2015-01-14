@@ -77,15 +77,15 @@ public class ShowMorePagerPanel extends AbstractPager {
         }
         int maxScrollPos = scrollable.getMaximumVerticalScrollPosition();
         
-        // Don't try to load more data if we haven't successfully scrolled down due to data
-        // unavailability
+        // Don't try to load more data if we haven't successfully scrolled down
+        // due to data unavailability
         if (maxScrollPos == lastMaxScrollPosWhenRangeChanged) {
           return;
         }
         
-        
         boolean predictiveScroll = Settings.get().getPredictiveScrolling();
-        double scrollThreshold = predictiveScroll ? THRESHOLD_FRACTION * maxScrollPos : maxScrollPos;
+        double scrollThreshold = predictiveScroll 
+            ? THRESHOLD_FRACTION * maxScrollPos : maxScrollPos;
 
         if (lastScrollPos >= scrollThreshold) {
           // We are near the end, so increase the page size.
@@ -127,11 +127,7 @@ public class ShowMorePagerPanel extends AbstractPager {
 
   @Override
   protected void onRangeOrRowCountChanged() {
-    lastMaxScrollPosWhenRangeChanged = scrollable.getMaximumVerticalScrollPosition();
-  }
-  
-  void reset() {
-    lastScrollPos = 0;
-    lastMaxScrollPosWhenRangeChanged = 0;
+    lastMaxScrollPosWhenRangeChanged = 
+        scrollable.getMaximumVerticalScrollPosition();
   }
 }

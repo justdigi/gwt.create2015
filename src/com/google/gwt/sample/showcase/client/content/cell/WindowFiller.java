@@ -23,9 +23,6 @@ class WindowFiller {
     cellList.addLoadingStateChangeHandler(handler);
   }
   
-  void reset() {
-  }
-  
   static WindowFiller install(CellList<?> cellList) {
     return new WindowFiller(cellList);
   }

@@ -20,13 +20,6 @@ class FollowUpFetcher {
     cellList.addLoadingStateChangeHandler(handler);
   }
   
-  void reset() {
-    if (timer != null) {
-      timer.cancel();
-      timer = null;
-    }
-  }
-  
   static FollowUpFetcher install(CellList<?> cellList) {
     return new FollowUpFetcher(cellList);
   }

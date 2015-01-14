@@ -494,8 +494,4 @@ public class ContactDatabase {
   private <T> T nextValue(T[] array) {
     return array[Random.nextInt(array.length)];
   }
-
-  public void reset() {
-    dataProvider.reset();
-  }
 }

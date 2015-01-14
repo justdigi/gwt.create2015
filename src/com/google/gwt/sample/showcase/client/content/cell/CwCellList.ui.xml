@@ -67,9 +67,6 @@
           <br />
           <g:CheckBox ui:field="keyHandlingCheckbox"/>
           Custom key handling
-          <br />
-          <br />
-          <g:Button ui:field="reload">Reload</g:Button>
         </td>
       </tr>
       <tr>

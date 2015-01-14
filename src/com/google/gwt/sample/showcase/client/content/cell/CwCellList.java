@@ -43,7 +43,6 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.view.client.Range;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
 
@@ -161,17 +160,11 @@ public class CwCellList extends ContentWidget {
   @UiField
   CheckBox keyHandlingCheckbox;
 
-  @UiField
-  Button reload;
-
   /**
    * The CellList.
    */
   @ShowcaseData
   private CellList<ContactInfo> cellList;
-
-  private FollowUpFetcher followUpFetcher;
-  private WindowFiller windowFiller;
 
   /**
    * Constructor.
@@ -238,8 +231,8 @@ public class CwCellList extends ContentWidget {
       }
     });
     
-    followUpFetcher = FollowUpFetcher.install(cellList);
-    windowFiller = WindowFiller.install(cellList);
+    FollowUpFetcher.install(cellList);
+    WindowFiller.install(cellList);
     
     Settings.get().addPredictiveScrollingValueChangeHandler(
         new ValueChangeHandler<Boolean>() {
@@ -349,15 +342,6 @@ public class CwCellList extends ContentWidget {
     setKeyboardPagingPolicy();
   }
   
-  @UiHandler("reload")
-  protected void onReload(ClickEvent event) {
-    ContactDatabase.get().reset();
-    pagerPanel.reset();
-    followUpFetcher.reset();
-    windowFiller.reset();
-    cellList.setVisibleRangeAndClearData(new Range(0, getInitialPageSize()), true);
-  }
-
   private static int getInitialPageSize() {
     return Settings.get().getConservativeStart() ? 5 : 15;
   }
