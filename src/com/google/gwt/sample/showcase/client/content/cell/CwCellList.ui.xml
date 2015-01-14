@@ -64,7 +64,7 @@
           Window filling
           <br />
           <g:CheckBox ui:field="keyHandlingCheckbox"/>
-          Custom Key Handling
+          Custom key handling
           <br />
           <br />
           <g:Button ui:field="reload">Reload</g:Button>

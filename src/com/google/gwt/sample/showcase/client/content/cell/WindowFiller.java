@@ -10,24 +10,19 @@ import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.view.client.Range;
-import com.google.gwt.view.client.RowCountChangeEvent;
 
 class WindowFiller {
 
   private static final Logger logger = 
       Logger.getLogger(WindowFiller.class.getName());
 
-  private boolean waitingToSeeIfRangeChangeWasSufficient;
-
   private WindowFiller(CellList<?> cellList) {
     Handler handler = new Handler(cellList);
     Window.addResizeHandler(handler);
     cellList.addLoadingStateChangeHandler(handler);
-    cellList.addRowCountChangeHandler(handler);
   }
   
   void reset() {
-    waitingToSeeIfRangeChangeWasSufficient = false;
   }
   
   static WindowFiller install(CellList<?> cellList) {
@@ -35,10 +30,7 @@ class WindowFiller {
   }
   
   private class Handler 
-      implements 
-          ResizeHandler,  
-          LoadingStateChangeEvent.Handler, 
-          RowCountChangeEvent.Handler {
+      implements ResizeHandler, LoadingStateChangeEvent.Handler {
     
     private CellList<?> cellList;
     
@@ -51,7 +43,7 @@ class WindowFiller {
       if (!fillingEnabled()) {
         return;
       }
-      maybeExtend();
+      maybeExtendAfterDomHasFinishedUpdating(); 
     }
 
     @Override
@@ -61,29 +53,32 @@ class WindowFiller {
       }
       if (event.getLoadingState() == 
           LoadingStateChangeEvent.LoadingState.LOADING) {
-        return;
-      }
-      if (waitingToSeeIfRangeChangeWasSufficient) {
+        logger.info("onLoadingStateChanged: LOADING");
         return;
       }
       if (!theresMoreDataThanVisible()) {
-        waitingToSeeIfRangeChangeWasSufficient = false;
         return;
       }
-      // Give the DOM a chance to update then check to see if we could fill.
+      logger.info("onLoadingStateChanged: " 
+          + (event.getLoadingState() == 
+              LoadingStateChangeEvent.LoadingState.LOADED 
+              ? "LOADED" : "PARTIALLY_LOADED"));
+      maybeExtendAfterDomHasFinishedUpdating(); 
+    }
+
+    private void maybeExtendAfterDomHasFinishedUpdating() {
       Scheduler.get().scheduleDeferred(new ScheduledCommand() {
         @Override
         public void execute() {
           maybeExtend();
         }
-      }); 
+      });
     }
 
     private void maybeExtend() {
       logger.info("maybeExtend");
       if (cellList.getOffsetHeight() 
           >= cellList.getParent().getOffsetHeight()) {
-        waitingToSeeIfRangeChangeWasSufficient = false;
         return;
       }
       int visibleItemCount = cellList.getVisibleItemCount();
@@ -94,22 +89,9 @@ class WindowFiller {
           (int) Math.ceil(
               cellList.getParent().getOffsetHeight() / pixelsPerItem));
       logger.info("maybeExtend: setting visible to " + newRange);
-      waitingToSeeIfRangeChangeWasSufficient = true;
       cellList.setVisibleRange(newRange);
     }   
     
-    @Override
-    public void onRowCountChange(RowCountChangeEvent event) {
-      if (!waitingToSeeIfRangeChangeWasSufficient) {
-        return;
-      }
-      if (!theresMoreDataThanVisible()) {
-        waitingToSeeIfRangeChangeWasSufficient = false;
-        return;
-      }
-      maybeExtend();
-    }
-
     private boolean theresMoreDataThanVisible() {
       return !cellList.isRowCountExact() 
           || (cellList.getVisibleItemCount() < cellList.getRowCount());
