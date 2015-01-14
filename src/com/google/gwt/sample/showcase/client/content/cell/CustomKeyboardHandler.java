@@ -8,13 +8,13 @@ import com.google.gwt.user.cellview.client.AbstractHasData.DefaultKeyboardSelect
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.view.client.CellPreviewEvent;
 
-class PreviewHandler<T extends ContactInfo> extends DefaultKeyboardSelectionHandler<T> {
+class CustomKeyboardHandler<T extends ContactInfo> extends DefaultKeyboardSelectionHandler<T> {
 
   private static final int PAGE_INCREMENT = 9;
   
   private final CellList<T> cellList;
   
-  public PreviewHandler(CellList<T> cellList) {
+  public CustomKeyboardHandler(CellList<T> cellList) {
     super(cellList);
     this.cellList = cellList;
   }
