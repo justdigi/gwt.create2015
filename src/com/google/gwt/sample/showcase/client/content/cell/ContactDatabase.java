@@ -73,6 +73,7 @@ public class ContactDatabase {
     private String firstName;
     private final int id;
     private String lastName;
+    private boolean starred;
 
     public ContactInfo(Category category) {
       this.id = nextId;
@@ -149,6 +150,10 @@ public class ContactDatabase {
       return lastName;
     }
 
+    public boolean isStarred() {
+      return starred;
+    }
+
     @Override
     public int hashCode() {
       return id;
@@ -207,6 +212,10 @@ public class ContactDatabase {
      */
     public void setLastName(String lastName) {
       this.lastName = lastName;
+    }
+    
+    public void setStarred(boolean starred) {
+      this.starred = starred;
     }
   }
 
