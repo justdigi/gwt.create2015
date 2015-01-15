@@ -1,5 +1,71 @@
-.gwt-CellList-cellListOddItem span:nth-child\(2\)::before, 
-.gwt-CellList-cellListEvenItem span:nth-child\(2\)::before {
-	content: "\A";
-  white-space: pre;
+.scrollContainer {
+  box-sizing: border-box;
+  height: 100%;
+  padding: 66px 0 12px;
+  position: absolute;
+  top: 0;
 }
+
+.selfAndOthersContainer {
+	height: 100%;
+}
+
+.selfContact {
+  box-sizing: border-box;
+	padding-right: 10px;
+  position: relative;
+  z-index: 1;
+}
+
+.selfContact,
+.scrollable {
+  text-align: left;
+  width: 250px;
+}
+
+.scrollable {
+  border: 1px solid #ccc;
+  height: 100%;
+}
+
+.contactFormCell {
+  padding-left: 20px;
+}
+
+.range {
+  font-size: 24px;
+  margin-top: 24px;
+}
+
+.gwt-CellList-cellListEvenItem,
+.gwt-CellList-cellListOddItem,
+.selfContact div {
+	display: flex;
+	align-items: center;
+}
+
+.gwt-CellList-cellListEvenItem span,
+.gwt-CellList-cellListOddItem span,
+.selfContact div span {
+  padding: 2px;
+}
+
+.gwt-CellList-cellListEvenItem span:nth-child\(2\),
+.gwt-CellList-cellListOddItem span:nth-child\(2\),
+.selfContact div span:nth-child\(2\) {
+  flex: 1;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px
+}
+::-webkit-scrollbar-button {
+    background: #ccc
+}
+::-webkit-scrollbar-track-piece {
+    background: #888
+}
+::-webkit-scrollbar-thumb {
+    background: #eee
+}​

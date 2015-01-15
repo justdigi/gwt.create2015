@@ -89,6 +89,8 @@ public class CwCellList extends ContentWidget {
   @ShowcaseSource
   static interface Images extends ClientBundle {
     ImageResource contact();
+    ImageResource star();
+    ImageResource starOutline();
   }
 
   /**
@@ -110,6 +112,12 @@ public class CwCellList extends ContentWidget {
    */
   @ShowcaseSource
   interface Styles extends CssResource {
+    String contactFormCell();
+    String range();
+    String selfAndOthersContainer();
+    String selfContact();
+    String scrollContainer();
+    String scrollable();
   }
 
   /**
@@ -236,7 +244,7 @@ public class CwCellList extends ContentWidget {
     // Create a CellList.
     Cell<ContactInfo> contactCell = 
         Settings.get().getCompositeCell()
-            ? CompositeContactCellFactory.create(images.contact()) 
+            ? CompositeContactCellFactory.create(images) 
             : new ContactCell(images.contact());
 
     // Set a key provider that provides a unique key for each contact. If key is

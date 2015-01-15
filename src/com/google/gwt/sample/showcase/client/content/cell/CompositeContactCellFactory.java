@@ -8,21 +8,22 @@ import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.FieldUpdater;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.cell.client.ImageResourceCell;
-import com.google.gwt.cell.client.TextCell;
+import com.google.gwt.cell.client.SafeHtmlCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.EventTarget;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.sample.showcase.client.content.cell.ContactDatabase.ContactInfo;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ImageResourceRenderer;
 
 class CompositeContactCellFactory {
 
-  static Cell<ContactInfo> create(final ImageResource contactImage) {
+  static Cell<ContactInfo> create(
+      final CwCellList.Images images) {
     ArrayList<HasCell<ContactInfo, ?>> hasCells = 
         new ArrayList<HasCell<ContactInfo, ?>>();
     hasCells.add(new HasCell<ContactInfo, ImageResource>() {
@@ -38,37 +39,26 @@ class CompositeContactCellFactory {
 
       @Override
       public ImageResource getValue(ContactInfo contact) {
-        return contactImage;
+        return images.contact();
       }});
-    hasCells.add(new HasCell<ContactInfo, String>() {
+    hasCells.add(new HasCell<ContactInfo, SafeHtml>() {
       @Override
-      public Cell<String> getCell() {
-        return new TextCell();
+      public Cell<SafeHtml> getCell() {
+        return new SafeHtmlCell();
       }
 
       @Override
-      public FieldUpdater<ContactInfo, String> getFieldUpdater() {
+      public FieldUpdater<ContactInfo, SafeHtml> getFieldUpdater() {
         return null;
       }
 
       @Override
-      public String getValue(ContactInfo contact) {
-        return contact.getFullName();
-      }});
-    hasCells.add(new HasCell<ContactInfo, String>() {
-      @Override
-      public Cell<String> getCell() {
-        return new TextCell();
-      }
-
-      @Override
-      public FieldUpdater<ContactInfo, String> getFieldUpdater() {
-        return null;
-      }
-
-      @Override
-      public String getValue(ContactInfo contact) {
-        return contact.getAddress();
+      public SafeHtml getValue(ContactInfo contact) {
+        return new SafeHtmlBuilder()
+            .appendEscaped(contact.getFullName())
+            .appendHtmlConstant("<br>")
+            .appendEscaped(contact.getAddress())
+            .toSafeHtml();
       }});
     hasCells.add(new HasCell<ContactInfo, Boolean>() {
       @Override
@@ -82,7 +72,8 @@ class CompositeContactCellFactory {
           public void render(Cell.Context context, Boolean value,
               SafeHtmlBuilder sb) {
             if (value != null) {
-              sb.append(renderer.render(contactImage));
+              sb.append(renderer.render(
+                  value ? images.star() : images.starOutline()));
             }            
           }
           
@@ -99,6 +90,9 @@ class CompositeContactCellFactory {
               EventTarget eventTarget = event.getEventTarget();
               if (parent.getFirstChildElement().isOrHasChild(Element.as(eventTarget))) {
                 valueUpdater.update(!value);
+                SafeHtmlBuilder sb = new SafeHtmlBuilder();
+                render(context, !value, sb);
+                parent.setInnerSafeHtml(sb.toSafeHtml());
               }
             }
           }
@@ -111,7 +105,6 @@ class CompositeContactCellFactory {
 
           @Override
           public void update(int index, ContactInfo contact, Boolean value) {
-            Window.alert("Field updater: " + value);
             contact.setStarred(value);
           }
         };

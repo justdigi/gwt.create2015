@@ -5,59 +5,28 @@
   xmlns:c='urn:import:com.google.gwt.user.cellview.client'
   xmlns:s="urn:import:com.google.gwt.sample.showcase.client.content.cell">
 
-  <ui:style>
-    .scrollContainer {
-      box-sizing: border-box;
-      height: 100%;
-      padding: 66px 0 12px;
-      position: absolute;
-      top: 0;
-    }
-
-    .selfContact {
-      position: relative;
-      z-index: 1;
-    }
-
-    .selfContact,
-    .scrollable {
-      text-align: left;
-      width: 250px;
-    }
-    
-    .scrollable {
-      border: 1px solid #ccc;
-      height: 100%;
-    }
-    
-    .contactFormCell {
-      padding-left: 20px;
-    }
-    
-    .range {
-      font-size: 24px;
-      margin-top: 24px;
-    }
-  </ui:style>
-
+	<ui:with
+	  field="res"
+	  type="com.google.gwt.sample.showcase.client.content.cell.CwCellList.Resources" />
+      
   <g:HTMLPanel height="100%">
     <table style="height: 100%">
       <tr>
         <td
           valign='top'
           align='center'
-          style="height: 100%">
+          class="{res.styles.selfAndOthersContainer}">
           <g:FocusPanel
-            addStyleNames='{style.selfContact}'
+            addStyleNames='{res.styles.selfContact}'
             ui:field='selfContactContainer' />
-          <div class='{style.scrollContainer}' >
+          <div class='{res.styles.scrollContainer}' >
             <s:ShowMorePagerPanel
-              addStyleNames='{style.scrollable}'
+              addStyleNames='{res.styles.scrollable}'
               ui:field='pagerPanel' />
           </div>
         </td>
         <td
-          class='{style.contactFormCell}'
+          class='{res.styles.contactFormCell}'
           valign='top'
           align='center'>
           <s:ContactInfoForm
@@ -70,7 +39,7 @@
           </g:Button>
           <s:RangeLabelPager
             ui:field='rangeLabelPager'
-            styleName="{style.range}" /> 
+            styleName="{res.styles.range}" /> 
         </td>
         <td valign="top">
           <g:CheckBox ui:field="predictiveScrollingCheckbox"/>
