@@ -153,9 +153,9 @@ public class CwCellList extends ContentWidget {
       if (value == null) {
         return;
       }
-
-      GWT.<Templates>create(Templates.class).cell(
-          imageHtml, value.getFullName(), value.getAddress());
+      sb.append(
+          GWT.<Templates>create(Templates.class).cell(
+              imageHtml, value.getFullName(), value.getAddress()));
     }
   }
 
