@@ -15,6 +15,8 @@
  */
 package com.google.gwt.sample.showcase.client.content.cell;
 
+import java.util.Arrays;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
@@ -57,6 +59,8 @@ public class ContactInfoForm extends Composite {
   @UiField
   Button updateButton;
 
+  private final Category[] categories;
+
   private ContactInfo contactInfo;
 
   public ContactInfoForm() {
@@ -66,7 +70,11 @@ public class ContactInfoForm extends Composite {
     birthdayBox.setFormat(new DateBox.DefaultFormat(dateFormat));
 
     // Add the categories to the category box.
-    final Category[] categories = ContactDatabase.get().queryCategories();
+    Category[] catDb = ContactDatabase.get().queryCategories();
+    categories = Arrays.copyOf(catDb, catDb.length + 1);
+    // Add an extra to support the self contact
+    categories[catDb.length] = ContactDatabase.get().getCategoryForMe();
+    
     for (Category category : categories) {
       categoryBox.addItem(category.getDisplayName());
     }
@@ -117,7 +125,6 @@ public class ContactInfoForm extends Composite {
       addressBox.setText(contact.getAddress());
       birthdayBox.setValue(contact.getBirthday());
       Category category = contact.getCategory();
-      Category[] categories = ContactDatabase.get().queryCategories();
       for (int i = 0; i < categories.length; i++) {
         if (category == categories[i]) {
           categoryBox.setSelectedIndex(i);

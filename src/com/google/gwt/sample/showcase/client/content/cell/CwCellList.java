@@ -21,8 +21,15 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.gwt.event.dom.client.HasClickHandlers;
+import com.google.gwt.event.dom.client.HasKeyDownHandlers;
+import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.event.dom.client.KeyDownEvent;
+import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -35,6 +42,7 @@ import com.google.gwt.sample.showcase.client.ShowcaseAnnotations.ShowcaseData;
 import com.google.gwt.sample.showcase.client.ShowcaseAnnotations.ShowcaseRaw;
 import com.google.gwt.sample.showcase.client.ShowcaseAnnotations.ShowcaseSource;
 import com.google.gwt.sample.showcase.client.content.cell.ContactDatabase.ContactInfo;
+import com.google.gwt.sample.showcase.client.content.cell.CustomKeyboardHandler.SelectableWidget;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
@@ -45,6 +53,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.CheckBox;
+import com.google.gwt.user.client.ui.FocusPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.gwt.view.client.SingleSelectionModel;
@@ -187,6 +196,11 @@ public class CwCellList extends ContentWidget {
   @UiField
   CheckBox compositeCellCheckbox;
 
+  @UiField
+  FocusPanel selfContactContainer;
+
+  private SimpleContactView selfContactView; 
+
   /**
    * The CellList.
    */
@@ -213,6 +227,12 @@ public class CwCellList extends ContentWidget {
     GWT.<Resources>create(Resources.class).styles().ensureInjected();
     Images images = GWT.create(Images.class);
 
+    // Create the UiBinder.
+    // Bind this before creating the CellList so we can rely on the UiFields
+    // existing when the custom keyboard handler is set up.
+    Binder uiBinder = GWT.create(Binder.class);
+    Widget widget = uiBinder.createAndBindUi(this);
+
     // Create a CellList.
     Cell<ContactInfo> contactCell = 
         Settings.get().getCompositeCell()
@@ -225,10 +245,8 @@ public class CwCellList extends ContentWidget {
     cellList = new CellList<ContactInfo>(contactCell,
         ContactDatabase.ContactInfo.KEY_PROVIDER);
     cellList.setPageSize(getInitialPageSize());
-    setKeyboardPagingPolicy();
-    cellList.setKeyboardSelectionHandler(new CustomKeyboardHandler<>(cellList));
-    cellList.setKeyboardSelectionPolicy(
-        KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+
+    setupKeyboardHandling();
 
     // Add a selection model so we can select cells.
     final SingleSelectionModel<ContactInfo> selectionModel = 
@@ -241,9 +259,16 @@ public class CwCellList extends ContentWidget {
       }
     });
 
-    // Create the UiBinder.
-    Binder uiBinder = GWT.create(Binder.class);
-    Widget widget = uiBinder.createAndBindUi(this);
+    // Use the same cell to create a widget to show a contact for the user
+    selfContactView = new SimpleContactView(contactCell);
+    selfContactView.setContact(ContactDatabase.get().createContactForMe());
+    selfContactContainer.setWidget(selfContactView);
+    addSelectHandlers(selfContactContainer, new Runnable() {
+      @Override
+      public void run() {
+        showSelfContactInfo();
+      }
+    });
 
     // Add the CellList to the data provider in the database.
     ContactDatabase.get().addDataDisplay(cellList);
@@ -256,6 +281,7 @@ public class CwCellList extends ContentWidget {
     rangeLabelPager.setDisplay(cellList);
 
     // Handle events from the generate button.
+    // Buttons fire their click handler when Enter is pressed
     generateButton.addClickHandler(new ClickHandler() {
       public void onClick(ClickEvent event) {
         ContactDatabase.get().generateContacts(50);
@@ -342,6 +368,54 @@ public class CwCellList extends ContentWidget {
   @Override
   public boolean hasScrollableContent() {
     return false;
+  }
+
+  private <W extends HasClickHandlers & HasKeyDownHandlers>
+      void addSelectHandlers(W widget, final Runnable handler) {
+    widget.addKeyDownHandler(new KeyDownHandler() {
+      @Override
+      public void onKeyDown(KeyDownEvent event) {
+        if (event.getNativeKeyCode() == KeyCodes.KEY_ENTER) {
+          handler.run();
+        }
+      }
+    });
+    widget.addClickHandler(new ClickHandler() {
+      @Override
+      public void onClick(ClickEvent event) {
+        handler.run();
+      }
+    });
+  }
+
+  void showSelfContactInfo() {
+    // We always set the self contact, so we can count on it not being null
+    contactForm.setContact(selfContactView.getContact());
+  }
+
+  void setupKeyboardHandling() {
+    SelectableWidget topWidgetForKeyHandler = new SelectableWidget() {
+      @Override
+      public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
+        return selfContactContainer.addKeyDownHandler(handler);
+      }
+      @Override
+      public void fireEvent(GwtEvent<?> event) {
+        selfContactContainer.fireEvent(event);
+      }
+      @Override
+      public void selectWidget() {
+        selfContactContainer.setFocus(true);
+        showSelfContactInfo();
+      }
+    };
+
+    cellList.setKeyboardSelectionHandler(
+        new CustomKeyboardHandler<>(cellList, topWidgetForKeyHandler));
+
+    setKeyboardPagingPolicy();
+    cellList.setKeyboardSelectionPolicy(
+        KeyboardSelectionPolicy.BOUND_TO_SELECTION);
   }
 
   void setKeyboardPagingPolicy() {

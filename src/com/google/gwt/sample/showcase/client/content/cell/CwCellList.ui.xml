@@ -6,11 +6,28 @@
   xmlns:s="urn:import:com.google.gwt.sample.showcase.client.content.cell">
 
   <ui:style>
-    .scrollable {
+    .scrollContainer {
+      box-sizing: border-box;
       height: 100%;
-      width: 250px;
-      border: 1px solid #ccc;
+      padding: 66px 0 12px;
+      position: absolute;
+      top: 0;
+    }
+
+    .selfContact {
+      position: relative;
+      z-index: 1;
+    }
+
+    .selfContact,
+    .scrollable {
       text-align: left;
+      width: 250px;
+    }
+    
+    .scrollable {
+      border: 1px solid #ccc;
+      height: 100%;
     }
     
     .contactFormCell {
@@ -18,8 +35,8 @@
     }
     
     .range {
-	    font-size: 24px;
-	    margin-top: 24px;
+      font-size: 24px;
+      margin-top: 24px;
     }
   </ui:style>
 
@@ -30,9 +47,14 @@
           valign='top'
           align='center'
           style="height: 100%">
-          <s:ShowMorePagerPanel
-            addStyleNames='{style.scrollable}'
-            ui:field='pagerPanel' />
+          <g:FocusPanel
+            addStyleNames='{style.selfContact}'
+            ui:field='selfContactContainer' />
+          <div class='{style.scrollContainer}' >
+            <s:ShowMorePagerPanel
+              addStyleNames='{style.scrollable}'
+              ui:field='pagerPanel' />
+          </div>
         </td>
         <td
           class='{style.contactFormCell}'
