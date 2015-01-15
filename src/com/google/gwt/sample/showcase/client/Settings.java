@@ -25,8 +25,8 @@ public class Settings {
   
   private ObservableBoolean predictiveScrolling = 
       new ObservableBoolean("ps", false);
-  private ObservableBoolean followUpFetching = 
-      new ObservableBoolean("ff", false);
+  private ObservableBoolean prefetching = 
+      new ObservableBoolean("pf", false);
   private ObservableBoolean conservativeStart = 
       new ObservableBoolean("cs", false);
   private ObservableBoolean windowFilling = 
@@ -37,7 +37,7 @@ public class Settings {
       new ObservableBoolean("cc", false);
   
   private ObservableBoolean[] observables = new ObservableBoolean[] {
-      followUpFetching, 
+      prefetching, 
       predictiveScrolling, 
       conservativeStart,
       windowFilling,
@@ -70,19 +70,19 @@ public class Settings {
     return predictiveScrolling.addValueChangeHandler(handler);
   }
   
-  public boolean getFollowUpFetching() {
-    return followUpFetching.getValue();
+  public boolean getPrefetching() {
+    return prefetching.getValue();
   }
 
-  public void setFollowUpFetching(Boolean value) {
-    if (followUpFetching.setValue(value)) {
+  public void setPrefetching(Boolean value) {
+    if (prefetching.setValue(value)) {
       updateHistory();
     }
   }
 
-  public HandlerRegistration addFollowUpFetchingValueChangeHandler(
+  public HandlerRegistration addPrefetchingValueChangeHandler(
       ValueChangeHandler<Boolean> handler) {
-    return followUpFetching.addValueChangeHandler(handler);
+    return prefetching.addValueChangeHandler(handler);
   }
   
   public boolean getConservativeStart() {

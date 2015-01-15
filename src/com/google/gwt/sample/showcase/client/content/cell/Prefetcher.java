@@ -8,19 +8,19 @@ import com.google.gwt.user.cellview.client.LoadingStateChangeEvent;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.view.client.Range;
 
-class FollowUpFetcher {
+class Prefetcher {
 
   private static final Logger logger = 
-      Logger.getLogger(FollowUpFetcher.class.getName());
+      Logger.getLogger(Prefetcher.class.getName());
   
   private Timer timer;
 
-  private FollowUpFetcher(CellList<?> cellList) {
+  private Prefetcher(CellList<?> cellList) {
     cellList.addLoadingStateChangeHandler(new Handler(cellList));
   }
   
-  static FollowUpFetcher install(CellList<?> cellList) {
-    return new FollowUpFetcher(cellList);
+  static Prefetcher install(CellList<?> cellList) {
+    return new Prefetcher(cellList);
   }
   
   private class Handler implements LoadingStateChangeEvent.Handler {
@@ -34,7 +34,7 @@ class FollowUpFetcher {
     
     @Override
     public void onLoadingStateChanged(LoadingStateChangeEvent event) {
-      if (!followUpFetchingEnabled()) {
+      if (!prefetchingEnabled()) {
         return;
       }
       if (event.getLoadingState() == 
@@ -77,8 +77,8 @@ class FollowUpFetcher {
       }
     }   
     
-    private boolean followUpFetchingEnabled() {
-      return Settings.get().getFollowUpFetching();
+    private boolean prefetchingEnabled() {
+      return Settings.get().getPrefetching();
     }
   }
 }

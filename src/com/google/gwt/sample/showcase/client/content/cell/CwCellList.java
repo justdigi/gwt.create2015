@@ -191,7 +191,7 @@ public class CwCellList extends ContentWidget {
   CheckBox predictiveScrollingCheckbox;
 
   @UiField
-  CheckBox followUpFetchingCheckbox;
+  CheckBox prefetchingCheckbox;
 
   @UiField
   CheckBox conservativeStartCheckbox;
@@ -297,7 +297,7 @@ public class CwCellList extends ContentWidget {
       }
     });
     
-    FollowUpFetcher.install(cellList);
+    Prefetcher.install(cellList);
     WindowFiller.install(cellList);
     
     Settings.get().addPredictiveScrollingValueChangeHandler(
@@ -310,14 +310,14 @@ public class CwCellList extends ContentWidget {
     predictiveScrollingCheckbox.setValue(
         Settings.get().getPredictiveScrolling());
     
-    Settings.get().addFollowUpFetchingValueChangeHandler(
+    Settings.get().addPrefetchingValueChangeHandler(
         new ValueChangeHandler<Boolean>() {
           @Override
           public void onValueChange(ValueChangeEvent<Boolean> event) {
-            followUpFetchingCheckbox.setValue(event.getValue());
+            prefetchingCheckbox.setValue(event.getValue());
           }
         });
-    followUpFetchingCheckbox.setValue(Settings.get().getFollowUpFetching());
+    prefetchingCheckbox.setValue(Settings.get().getPrefetching());
 
     Settings.get().addConservativeStartChangeHandler(
         new ValueChangeHandler<Boolean>() {
@@ -441,10 +441,10 @@ public class CwCellList extends ContentWidget {
     Settings.get().setPredictiveScrolling(event.getValue());
   }
   
-  @UiHandler("followUpFetchingCheckbox")
-  protected void onFollowUpFetchingCheckboxChange(
+  @UiHandler("prefetchingCheckbox")
+  protected void onPrefetchingCheckboxChange(
       ValueChangeEvent<Boolean> event) {
-    Settings.get().setFollowUpFetching(event.getValue());
+    Settings.get().setPrefetching(event.getValue());
   }
   
   @UiHandler("conservativeStartCheckbox")

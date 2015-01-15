@@ -42,19 +42,19 @@
             styleName="{res.styles.range}" /> 
         </td>
         <td valign="top">
+          <g:CheckBox ui:field="windowFillingCheckbox"/>
+          Window filling
+          <br />
           <g:CheckBox ui:field="predictiveScrollingCheckbox"/>
           Predictive scrolling
-          <br />
-          <g:CheckBox ui:field="followUpFetchingCheckbox"/>
-          Follow-up fetching
           <br />
           <g:HTMLPanel visible="false">
 	          <g:CheckBox ui:field="conservativeStartCheckbox"/>
 	          Conservative start
 	          <br />
           </g:HTMLPanel>
-          <g:CheckBox ui:field="windowFillingCheckbox"/>
-          Window filling
+          <g:CheckBox ui:field="prefetchingCheckbox"/>
+          Prefetching
           <br />
           <g:CheckBox ui:field="keyHandlingCheckbox"/>
           Custom key handling
