@@ -251,7 +251,7 @@ public class CwCellList extends ContentWidget {
     // Set a key provider that provides a unique key for each contact. If key is
     // used to identify contacts when fields (such as the name and address)
     // change.
-    cellList = new CellList<ContactInfo>(contactCell,
+    cellList = new CellList<>(contactCell,
         ContactDatabase.ContactInfo.KEY_PROVIDER);
     cellList.setPageSize(getInitialPageSize());
 

@@ -16,8 +16,7 @@ class FollowUpFetcher {
   private Timer timer;
 
   private FollowUpFetcher(CellList<?> cellList) {
-    Handler handler = new Handler(cellList);
-    cellList.addLoadingStateChangeHandler(handler);
+    cellList.addLoadingStateChangeHandler(new Handler(cellList));
   }
   
   static FollowUpFetcher install(CellList<?> cellList) {
