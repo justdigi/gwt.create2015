@@ -117,7 +117,7 @@ class CompositeContactCellFactory {
         Cells.adaptWithConstantValue(new TextCell(), "@");
     return HasCells.forCell(Cells.makeClickable(
         mailToIcon,
-        new Cells.Receiver<ContactInfo>() {
+        new Receiver<ContactInfo>() {
           public void accept(ContactInfo contact) {
             Window.open(
                 "https://mail.google.com/mail/u/0/" 

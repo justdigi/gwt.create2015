@@ -12,10 +12,6 @@ import com.google.gwt.event.dom.client.KeyCodes;
 
 public class Cells {
 
-  interface Receiver<T> {
-    void accept(T value);
-  }
-
   private Cells() {}
   
   public static <F, T> Cell<F> adapt(Cell<T> cell, Function<F, T> transform) {
