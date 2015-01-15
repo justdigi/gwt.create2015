@@ -1,6 +1,6 @@
 package com.google.gwt.sample.showcase.client.content.cell;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell;
@@ -24,24 +24,34 @@ class CompositeContactCellFactory {
 
   static Cell<ContactInfo> create(
       final CwCellList.Images images) {
-    ArrayList<HasCell<ContactInfo, ?>> hasCells = 
-        new ArrayList<HasCell<ContactInfo, ?>>();
-    hasCells.add(
-        HasCells.<ContactInfo, ImageResource>forCellWithConstantValue(
-            new ImageResourceCell(), images.contact()));
-    hasCells.add(
-        HasCells.forCellAndFunction(
-            new SafeHtmlCell(), 
-            new Function<ContactInfo, SafeHtml>() {
-              public SafeHtml apply(ContactInfo contact) {
-                return new SafeHtmlBuilder()
-                    .appendEscaped(contact.getFullName())
-                    .appendHtmlConstant("<br>")
-                    .appendEscaped(contact.getAddress())
-                    .toSafeHtml();
-              }
-            }));
-    hasCells.add(new HasCell<ContactInfo, Boolean>() {
+    return new CompositeCell<ContactInfo>(Arrays.asList(
+        createContactIcon(images), 
+        createNameAndAddress(), 
+        createStar(images)));
+  }
+
+  private static HasCell<ContactInfo, ImageResource> createContactIcon(
+      final CwCellList.Images images) {
+    return HasCells.forCellWithConstantValue(
+        new ImageResourceCell(), images.contact());
+  }
+
+  private static HasCell<ContactInfo, SafeHtml> createNameAndAddress() {
+    return HasCells.forCellAndFunction(
+        new SafeHtmlCell(), 
+        new Function<ContactInfo, SafeHtml>() {
+          public SafeHtml apply(ContactInfo contact) {
+            return new SafeHtmlBuilder()
+                .appendEscaped(contact.getFullName())
+                .appendHtmlConstant("<br>")
+                .appendEscaped(contact.getAddress())
+                .toSafeHtml();
+          }
+        });
+  }
+
+  private static HasCell<ContactInfo, Boolean> createStar(final CwCellList.Images images) {
+    return new HasCell<ContactInfo, Boolean>() {
       @Override
       public Cell<Boolean> getCell() {
         return new AbstractCell<Boolean>(BrowserEvents.CLICK) {
@@ -94,8 +104,7 @@ class CompositeContactCellFactory {
       @Override
       public Boolean getValue(ContactInfo contact) {
         return contact.isStarred();
-      }});
-    return new CompositeCell<ContactInfo>(hasCells);
+      }};
   }
   
 //  public static <T> Cell<T> makeClickable(Cell<T> cell, final Receiver<T> clickReceiver) {
