@@ -210,6 +210,7 @@ public class CwCellList extends ContentWidget {
   @ShowcaseSource
   @Override
   public Widget onInitialize() {
+    GWT.<Resources>create(Resources.class).styles().ensureInjected();
     Images images = GWT.create(Images.class);
 
     // Create a CellList.

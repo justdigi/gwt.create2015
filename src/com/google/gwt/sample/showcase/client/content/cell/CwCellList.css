@@ -1,5 +1,5 @@
-.gwt-CellList-cellListOddItem span:nth-child(3)::before, 
-.gwt-CellList-cellListEvenItem span:nth-child(3)::before {
+.gwt-CellList-cellListOddItem span:nth-child\(2\)::before, 
+.gwt-CellList-cellListEvenItem span:nth-child\(2\)::before {
 	content: "\A";
   white-space: pre;
 }
