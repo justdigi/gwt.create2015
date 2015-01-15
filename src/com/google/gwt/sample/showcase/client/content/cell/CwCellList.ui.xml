@@ -67,6 +67,9 @@
           <br />
           <g:CheckBox ui:field="keyHandlingCheckbox"/>
           Custom key handling
+          <br />
+          <g:CheckBox ui:field="compositeCellCheckbox"/>
+          Composite cell
         </td>
       </tr>
       <tr>

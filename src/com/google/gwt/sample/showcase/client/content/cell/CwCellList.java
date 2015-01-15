@@ -16,6 +16,7 @@
 package com.google.gwt.sample.showcase.client.content.cell;
 
 import com.google.gwt.cell.client.AbstractCell;
+import com.google.gwt.cell.client.Cell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -24,6 +25,8 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.resources.client.CssResource.Import;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.sample.showcase.client.ContentWidget;
@@ -51,7 +54,7 @@ import com.google.gwt.view.client.SingleSelectionModel;
  */
 @ShowcaseRaw({
     "ContactDatabase.java", "CwCellList.ui.xml", "ContactInfoForm.java",
-    "ShowMorePagerPanel.java", "RangeLabelPager.java"})
+    "ShowMorePagerPanel.java", "RangeLabelPager.java", "CwCellList.css"})
 public class CwCellList extends ContentWidget {
 
   /**
@@ -77,6 +80,27 @@ public class CwCellList extends ContentWidget {
   @ShowcaseSource
   static interface Images extends ClientBundle {
     ImageResource contact();
+  }
+
+  /**
+   * The resources used by this example.
+   */
+  @ShowcaseSource
+  interface Resources extends ClientBundle {
+
+    /**
+     * Get the styles used but this example.
+     */
+    @Source("CwCellList.css")
+    @Import(CellList.Style.class)
+    Styles styles();
+  }
+  
+  /**
+   * The CSS Resources used by this example.
+   */
+  @ShowcaseSource
+  interface Styles extends CssResource {
   }
 
   /**
@@ -160,6 +184,9 @@ public class CwCellList extends ContentWidget {
   @UiField
   CheckBox keyHandlingCheckbox;
 
+  @UiField
+  CheckBox compositeCellCheckbox;
+
   /**
    * The CellList.
    */
@@ -186,7 +213,10 @@ public class CwCellList extends ContentWidget {
     Images images = GWT.create(Images.class);
 
     // Create a CellList.
-    ContactCell contactCell = new ContactCell(images.contact());
+    Cell<ContactInfo> contactCell = 
+        Settings.get().getCompositeCell()
+            ? CompositeContactCellFactory.create(images.contact()) 
+            : new ContactCell(images.contact());
 
     // Set a key provider that provides a unique key for each contact. If key is
     // used to identify contacts when fields (such as the name and address)
@@ -281,6 +311,16 @@ public class CwCellList extends ContentWidget {
         });
     keyHandlingCheckbox.setValue(Settings.get().getKeyHandling());
 
+    Settings.get().addCompositeCellChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            compositeCellCheckbox.setValue(event.getValue());
+            setKeyboardPagingPolicy();
+          }
+        });
+    compositeCellCheckbox.setValue(Settings.get().getCompositeCell());
+
     return widget;
   }
 
@@ -340,6 +380,12 @@ public class CwCellList extends ContentWidget {
       ValueChangeEvent<Boolean> event) {
     Settings.get().setKeyHandling(event.getValue());
     setKeyboardPagingPolicy();
+  }
+  
+  @UiHandler("compositeCellCheckbox")
+  protected void onCompositeCellCheckboxChange(
+      ValueChangeEvent<Boolean> event) {
+    Settings.get().setCompositeCell(event.getValue());
   }
   
   private static int getInitialPageSize() {

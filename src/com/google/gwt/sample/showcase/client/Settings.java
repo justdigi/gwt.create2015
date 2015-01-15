@@ -23,18 +23,26 @@ public class Settings {
     return instance;
   }
   
-  private ObservableBoolean predictiveScrolling = new ObservableBoolean("ps", false);
-  private ObservableBoolean followUpFetching = new ObservableBoolean("ff", false);
-  private ObservableBoolean conservativeStart = new ObservableBoolean("cs", false);
-  private ObservableBoolean windowFilling = new ObservableBoolean("wf", false);
-  private ObservableBoolean keyHandling = new ObservableBoolean("kh", false);
+  private ObservableBoolean predictiveScrolling = 
+      new ObservableBoolean("ps", false);
+  private ObservableBoolean followUpFetching = 
+      new ObservableBoolean("ff", false);
+  private ObservableBoolean conservativeStart = 
+      new ObservableBoolean("cs", false);
+  private ObservableBoolean windowFilling = 
+      new ObservableBoolean("wf", false);
+  private ObservableBoolean keyHandling = 
+      new ObservableBoolean("kh", false);
+  private ObservableBoolean compositeCell = 
+      new ObservableBoolean("cc", false);
   
   private ObservableBoolean[] observables = new ObservableBoolean[] {
       followUpFetching, 
       predictiveScrolling, 
       conservativeStart,
       windowFilling,
-      keyHandling
+      keyHandling,
+      compositeCell
   };
   
   private HandlerRegistration historyHandlerReg;
@@ -120,6 +128,21 @@ public class Settings {
   public HandlerRegistration addKeyHandlingChangeHandler(
       ValueChangeHandler<Boolean> handler) {
     return keyHandling.addValueChangeHandler(handler);
+  }
+  
+  public boolean getCompositeCell() {
+    return compositeCell.getValue();
+  }
+  
+  public void setCompositeCell(Boolean value) {
+    if (compositeCell.setValue(value)) {
+      updateHistory();
+    }
+  }
+  
+  public HandlerRegistration addCompositeCellChangeHandler(
+      ValueChangeHandler<Boolean> handler) {
+    return compositeCell.addValueChangeHandler(handler);
   }
   
   private void updateHistory() {
