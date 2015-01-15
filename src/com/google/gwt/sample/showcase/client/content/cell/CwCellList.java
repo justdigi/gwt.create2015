@@ -25,10 +25,10 @@ import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
-import com.google.gwt.event.logical.shared.ResizeEvent;
-import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.i18n.client.Constants;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.ImageResource;
@@ -39,13 +39,13 @@ import com.google.gwt.sample.showcase.client.ShowcaseAnnotations.ShowcaseData;
 import com.google.gwt.sample.showcase.client.ShowcaseAnnotations.ShowcaseRaw;
 import com.google.gwt.sample.showcase.client.ShowcaseAnnotations.ShowcaseSource;
 import com.google.gwt.sample.showcase.client.content.cell.ContactDatabase.ContactInfo;
+import com.google.gwt.sample.showcase.client.content.cell.CustomKeyboardHandler.SelectableWidget;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
-import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
@@ -199,6 +199,12 @@ public class CwCellList extends ContentWidget {
   public Widget onInitialize() {
     Images images = GWT.create(Images.class);
 
+    // Create the UiBinder.
+    // Bind this before creating the CellList so we can rely on the UiFields
+    // existing when the custom keyboard handler is set up.
+    Binder uiBinder = GWT.create(Binder.class);
+    Widget widget = uiBinder.createAndBindUi(this);
+
     // Create a CellList.
     ContactCell contactCell = new ContactCell(images.contact());
     
@@ -208,10 +214,8 @@ public class CwCellList extends ContentWidget {
     cellList = new CellList<ContactInfo>(contactCell,
         ContactDatabase.ContactInfo.KEY_PROVIDER);
     cellList.setPageSize(getInitialPageSize());
-    setKeyboardPagingPolicy();
-    cellList.setKeyboardSelectionHandler(new CustomKeyboardHandler<>(cellList));
-    cellList.setKeyboardSelectionPolicy(
-        KeyboardSelectionPolicy.BOUND_TO_SELECTION);
+
+    setupKeyboardHandling();
 
     // Add a selection model so we can select cells.
     final SingleSelectionModel<ContactInfo> selectionModel = 
@@ -224,10 +228,6 @@ public class CwCellList extends ContentWidget {
       }
     });
 
-    // Create the UiBinder.
-    Binder uiBinder = GWT.create(Binder.class);
-    Widget widget = uiBinder.createAndBindUi(this);
-
     // Use the same cell to create a widget to show a contact for the user
     selfContactView = new SimpleContactView(contactCell);
     selfContactView.setContact(ContactDatabase.get().createContactForMe());
@@ -235,7 +235,7 @@ public class CwCellList extends ContentWidget {
     addSelectHandlers(selfContactContainer, new Runnable() {
       @Override
       public void run() {
-        selectSelfContact();
+        showSelfContactInfo();
       }
     });
 
@@ -347,9 +347,34 @@ public class CwCellList extends ContentWidget {
     });
   }
 
-  void selectSelfContact() {
+  void showSelfContactInfo() {
     // We always set the self contact, so we can count on it not being null
     contactForm.setContact(selfContactView.getContact());
+  }
+
+  void setupKeyboardHandling() {
+    SelectableWidget topWidgetForKeyHandler = new SelectableWidget() {
+      @Override
+      public HandlerRegistration addKeyDownHandler(KeyDownHandler handler) {
+        return selfContactContainer.addKeyDownHandler(handler);
+      }
+      @Override
+      public void fireEvent(GwtEvent<?> event) {
+        selfContactContainer.fireEvent(event);
+      }
+      @Override
+      public void selectWidget() {
+        selfContactContainer.setFocus(true);
+        showSelfContactInfo();
+      }
+    };
+
+    cellList.setKeyboardSelectionHandler(
+        new CustomKeyboardHandler<>(cellList, topWidgetForKeyHandler));
+
+    setKeyboardPagingPolicy();
+    cellList.setKeyboardSelectionPolicy(
+        KeyboardSelectionPolicy.BOUND_TO_SELECTION);
   }
 
   void setKeyboardPagingPolicy() {
