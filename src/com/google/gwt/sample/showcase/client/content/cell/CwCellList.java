@@ -35,6 +35,8 @@ import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.resources.client.CssResource.Import;
 import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.sample.showcase.client.ContentWidget;
 import com.google.gwt.sample.showcase.client.Settings;
@@ -129,12 +131,22 @@ public class CwCellList extends ContentWidget {
     /**
      * The html of the image used for contacts.
      */
-    private final String imageHtml;
+    private final SafeHtml imageHtml;
 
     public ContactCell(ImageResource image) {
-      this.imageHtml = AbstractImagePrototype.create(image).getHTML();
+      this.imageHtml = AbstractImagePrototype.create(image).getSafeHtml();
     }
 
+    interface Templates extends SafeHtmlTemplates {
+      @Template(
+          "<table><tr>"
+          + "<td rowspan='3'>{0}</td>"
+          + "<td style='font-size:95%;'>{1}</td></tr><tr>"
+          + "<td>{2}</td>"
+          + "</tr></table>")
+      SafeHtml cell(SafeHtml imageHtml, String fullName, String address);
+    }
+    
     @Override
     public void render(Context context, ContactInfo value, SafeHtmlBuilder sb) {
       // Value can be null, so do a null check..
@@ -142,19 +154,8 @@ public class CwCellList extends ContentWidget {
         return;
       }
 
-      sb.appendHtmlConstant("<table>");
-
-      // Add the contact image.
-      sb.appendHtmlConstant("<tr><td rowspan='3'>");
-      sb.appendHtmlConstant(imageHtml);
-      sb.appendHtmlConstant("</td>");
-
-      // Add the name and address.
-      sb.appendHtmlConstant("<td style='font-size:95%;'>");
-      sb.appendEscaped(value.getFullName());
-      sb.appendHtmlConstant("</td></tr><tr><td>");
-      sb.appendEscaped(value.getAddress());
-      sb.appendHtmlConstant("</td></tr></table>");
+      GWT.<Templates>create(Templates.class).cell(
+          imageHtml, value.getFullName(), value.getAddress());
     }
   }
 
