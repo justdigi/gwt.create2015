@@ -15,8 +15,6 @@
  */
 package com.google.gwt.sample.showcase.client.content.cell;
 
-import java.util.concurrent.Callable;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.RunAsyncCallback;
@@ -27,6 +25,8 @@ import com.google.gwt.event.dom.client.HasKeyDownHandlers;
 import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
+import com.google.gwt.event.logical.shared.ResizeEvent;
+import com.google.gwt.event.logical.shared.ResizeHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.i18n.client.Constants;
@@ -45,6 +45,7 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellList;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.Button;
@@ -234,8 +235,7 @@ public class CwCellList extends ContentWidget {
     addSelectHandlers(selfContactContainer, new Runnable() {
       @Override
       public void run() {
-        // We always set the self contact, so we can count on it not being null
-        contactForm.setContact(selfContactView.getContact());
+        selectSelfContact();
       }
     });
 
@@ -328,7 +328,7 @@ public class CwCellList extends ContentWidget {
   public boolean hasScrollableContent() {
     return false;
   }
-  
+
   private <W extends HasClickHandlers & HasKeyDownHandlers>
       void addSelectHandlers(W widget, final Runnable handler) {
     widget.addKeyDownHandler(new KeyDownHandler() {
@@ -345,6 +345,11 @@ public class CwCellList extends ContentWidget {
         handler.run();
       }
     });
+  }
+
+  void selectSelfContact() {
+    // We always set the self contact, so we can count on it not being null
+    contactForm.setContact(selfContactView.getContact());
   }
 
   void setKeyboardPagingPolicy() {
