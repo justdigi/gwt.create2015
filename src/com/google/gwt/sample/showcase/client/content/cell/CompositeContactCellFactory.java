@@ -26,40 +26,21 @@ class CompositeContactCellFactory {
       final CwCellList.Images images) {
     ArrayList<HasCell<ContactInfo, ?>> hasCells = 
         new ArrayList<HasCell<ContactInfo, ?>>();
-    hasCells.add(new HasCell<ContactInfo, ImageResource>() {
-      @Override
-      public Cell<ImageResource> getCell() {
-        return new ImageResourceCell();
-      }
-
-      @Override
-      public FieldUpdater<ContactInfo, ImageResource> getFieldUpdater() {
-        return null;
-      }
-
-      @Override
-      public ImageResource getValue(ContactInfo contact) {
-        return images.contact();
-      }});
-    hasCells.add(new HasCell<ContactInfo, SafeHtml>() {
-      @Override
-      public Cell<SafeHtml> getCell() {
-        return new SafeHtmlCell();
-      }
-
-      @Override
-      public FieldUpdater<ContactInfo, SafeHtml> getFieldUpdater() {
-        return null;
-      }
-
-      @Override
-      public SafeHtml getValue(ContactInfo contact) {
-        return new SafeHtmlBuilder()
-            .appendEscaped(contact.getFullName())
-            .appendHtmlConstant("<br>")
-            .appendEscaped(contact.getAddress())
-            .toSafeHtml();
-      }});
+    hasCells.add(
+        HasCells.<ContactInfo, ImageResource>forCellWithConstantValue(
+            new ImageResourceCell(), images.contact()));
+    hasCells.add(
+        HasCells.forCellAndFunction(
+            new SafeHtmlCell(), 
+            new Function<ContactInfo, SafeHtml>() {
+              public SafeHtml apply(ContactInfo contact) {
+                return new SafeHtmlBuilder()
+                    .appendEscaped(contact.getFullName())
+                    .appendHtmlConstant("<br>")
+                    .appendEscaped(contact.getAddress())
+                    .toSafeHtml();
+              }
+            }));
     hasCells.add(new HasCell<ContactInfo, Boolean>() {
       @Override
       public Cell<Boolean> getCell() {

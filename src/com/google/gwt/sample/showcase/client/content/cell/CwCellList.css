@@ -64,8 +64,8 @@
     background: #ccc
 }
 ::-webkit-scrollbar-track-piece {
-    background: #888
+    background: #eee
 }
 ::-webkit-scrollbar-thumb {
-    background: #eee
+    background: #888
 }​

@@ -2,8 +2,6 @@ package com.google.gwt.sample.showcase.client.content.cell;
 
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.Element;
@@ -20,10 +18,6 @@ import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
  */
 public class TranslatingCell<F, T> implements Cell<F> {
 
-  interface Function<F, T> {
-    @Nullable T apply(@Nullable F input);
-  }
-  
   private final Function<? super F, ? extends T> translate;
   private final Cell<T> delegate;
 
