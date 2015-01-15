@@ -22,6 +22,19 @@ public class Cells {
     return new CellAdapter<F, T>(cell, transform, null);
   }   
   
+  public static <F, T> Cell<F> adaptWithConstantValue(
+      Cell<T> cell, final T value) {
+    return new CellAdapter<F, T>(
+        cell, 
+        new Function<F, T>() {
+          @Override
+          public T apply(F input) {
+            return value;
+          }
+        }, 
+        null);
+  }   
+  
   public static <T> Cell<T> makeClickable(
       Cell<T> cell, final Receiver<T> clickReceiver) {
     Set<String> events = new HashSet<>();

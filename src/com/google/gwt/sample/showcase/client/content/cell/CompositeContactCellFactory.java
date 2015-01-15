@@ -53,14 +53,14 @@ class CompositeContactCellFactory {
         });
   }
 
-  private static HasCell<ContactInfo, Boolean> createStar(final CwCellList.Images images) {
+  private static HasCell<ContactInfo, Boolean> createStar(
+      final CwCellList.Images images) {
     return new HasCell<ContactInfo, Boolean>() {
       @Override
       public Cell<Boolean> getCell() {
         return new AbstractCell<Boolean>(BrowserEvents.CLICK) {
 
-          private ImageResourceRenderer renderer =
-              new ImageResourceRenderer();
+          private ImageResourceRenderer renderer = new ImageResourceRenderer();
 
           @Override
           public void render(Cell.Context context, Boolean value,
@@ -108,18 +108,15 @@ class CompositeContactCellFactory {
       @Override
       public Boolean getValue(ContactInfo contact) {
         return contact.isStarred();
-      }};
+      }
+    };
   }
   
   private static HasCell<ContactInfo, ContactInfo> createMailTo() {
+    Cell<ContactInfo> mailToIcon = 
+        Cells.adaptWithConstantValue(new TextCell(), "@");
     return HasCells.forCell(Cells.makeClickable(
-        Cells.adapt(
-            new TextCell(),
-            new Function<ContactInfo, String>() {
-              public String apply(ContactInfo contact) {
-                return "@";
-              }
-            }),
+        mailToIcon,
         new Cells.Receiver<ContactInfo>() {
           public void accept(ContactInfo contact) {
             Window.open(
