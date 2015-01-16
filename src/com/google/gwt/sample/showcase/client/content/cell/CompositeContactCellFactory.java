@@ -116,20 +116,21 @@ class CompositeContactCellFactory {
   }
   
   private static HasCell<ContactInfo, ContactInfo> createMailTo() {
-    Cell<ContactInfo> mailToIcon = 
-        Cells.adaptWithConstantValue(new TextCell(), "@");
-    return HasCells.forCell(Cells.makeClickable(
-        mailToIcon,
-        new Receiver<ContactInfo>() {
-          public void accept(ContactInfo contact) {
-            Window.open(
-                "https://mail.google.com/mail/u/0/" 
-                    + "?view=cm&fs=1&tf=1&source=mailto&to=" 
-                    + contact.getFirstName() + "." + contact.getLastName() 
-                    + "@gmail.com",
-                "_blank",
-                null);
-          }
-        }));
+    Cell<ContactInfo> mailToIcon = Cells.adaptWithConstantValue(new TextCell(), "@");
+    return 
+        HasCells.forCell(
+            Cells.makeClickable(
+                mailToIcon,
+                new Receiver<ContactInfo>() {
+                  public void accept(ContactInfo contact) {
+                    Window.open(
+                        "https://mail.google.com/mail/u/0/" 
+                            + "?view=cm&fs=1&tf=1&source=mailto&to=" 
+                            + contact.getFirstName() + "." + contact.getLastName() 
+                            + "@gmail.com",
+                        "_blank",
+                        null);
+                  }
+                }));
   }
 }
