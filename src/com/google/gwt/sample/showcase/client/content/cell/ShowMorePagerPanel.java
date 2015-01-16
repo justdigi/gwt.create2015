@@ -19,6 +19,7 @@ import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.sample.showcase.client.Settings;
 import com.google.gwt.user.cellview.client.AbstractPager;
+import com.google.gwt.user.client.ui.HasScrolling;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.HasRows;
@@ -129,5 +130,9 @@ public class ShowMorePagerPanel extends AbstractPager {
   protected void onRangeOrRowCountChanged() {
     lastMaxScrollPosWhenRangeChanged = 
         scrollable.getMaximumVerticalScrollPosition();
+  }
+  
+  public HasScrolling getScrollable() {
+    return scrollable;
   }
 }

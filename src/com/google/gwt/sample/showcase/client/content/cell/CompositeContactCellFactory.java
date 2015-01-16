@@ -20,17 +20,20 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.sample.showcase.client.content.cell.ContactDatabase.ContactInfo;
 import com.google.gwt.user.client.Window;
+import com.google.gwt.user.client.ui.HasScrolling;
 import com.google.gwt.user.client.ui.ImageResourceRenderer;
 
 class CompositeContactCellFactory {
 
   static Cell<ContactInfo> create(
-      final CwCellList.Images images) {
-    return new CompositeCell<ContactInfo>(Arrays.asList(
-        createContactIcon(images), 
-        createNameAndAddress(),
-        createMailTo(),
-        createStar(images)));
+      CwCellList.Images images, HasScrolling scrollable) {
+    return Cells.makeFocusableWithoutScrolling(
+        new CompositeCell<ContactInfo>(Arrays.asList(
+            createContactIcon(images), 
+            createNameAndAddress(),
+            createMailTo(),
+            createStar(images))),
+        scrollable);
   }
 
   private static HasCell<ContactInfo, ImageResource> createContactIcon(

@@ -9,6 +9,7 @@ import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.event.dom.client.KeyCodes;
+import com.google.gwt.user.client.ui.HasScrolling;
 
 public class Cells {
 
@@ -39,7 +40,10 @@ public class Cells {
     return new CellAdapter<T, T>(cell, null, events) {
       @Override
       public void onBrowserEvent(
-          Context context, Element parent, T value, NativeEvent event,
+          Context context,
+          Element parent, 
+          T value, 
+          NativeEvent event,
           ValueUpdater<T> valueUpdater) {
         super.onBrowserEvent(context, parent, value, event, valueUpdater);
         if (event.getType().equals(BrowserEvents.CLICK)
@@ -50,4 +54,32 @@ public class Cells {
       }
     };
   }   
+  
+  /**
+   * Wrap the given cell so that if
+   * {@link Cell#resetFocus(com.google.gwt.cell.client.Cell.Context, Element, Object)} is
+   * called on it, the wrapped cell will focus itself, but will also make sure that the
+   * browser window doesn't automatically scroll the cell into view. This is handy for
+   * cells that should respond to keyboard commands even when out of view.
+   *
+   * <p>Note that refocusing on top-level cells will happen automatically when a cell widget
+   * is redrawn. One surprising cause of a redraws is that HasDataPresenter optimizes extensions
+   * to a short list by just redoing the whole list. See
+   * {@link com.google.gwt.user.cellview.client.HasDataPresenter#REDRAW_THRESHOLD} for what
+   * can trigger redraws.
+   */
+  public static <T> Cell<T> makeFocusableWithoutScrolling(
+      Cell<T> cellToWrap, final HasScrolling scrollable) {
+    return new CellAdapter<T, T>(cellToWrap, null, null) {
+      @Override 
+      public boolean resetFocus(Context context, Element parent, T value) {
+        int x = scrollable.getHorizontalScrollPosition();
+        int y = scrollable.getVerticalScrollPosition();
+        parent.focus();
+        scrollable.setHorizontalScrollPosition(x);
+        scrollable.setVerticalScrollPosition(y);
+        return true;
+      }
+    };
+  }
 }
