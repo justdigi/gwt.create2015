@@ -57,52 +57,51 @@ class CustomKeyboardHandler<T extends ContactInfo> extends DefaultKeyboardSelect
   public void onCellPreview(CellPreviewEvent<T> event) {
     if (Settings.get().getKeyHandling()) {
       NativeEvent nativeEvent = event.getNativeEvent();
-      
-      switch (nativeEvent.getType()) {
-        case BrowserEvents.KEYDOWN:  // A key has been pushed down
-          if (nativeEvent.getShiftKey() || nativeEvent.getAltKey() 
-              || nativeEvent.getCtrlKey() || nativeEvent.getMetaKey()) {
-            // Ignore if a modifier key is down
-            return;
-          }
-          
-          switch (nativeEvent.getKeyCode()) {
-            case KeyCodes.KEY_DOWN:  // The down arrow key
-            case KeyCodes.KEY_J:
-              setCurrentRow(cellList.getKeyboardSelectedRow() + 1);
-              cancelEvent(event);
-              break;
-            case KeyCodes.KEY_UP:  // The up arrow key
-            case KeyCodes.KEY_K:
-              if (cellList.getKeyboardSelectedRow() < 1) {
-                goAboveList(event.getValue());
-              } else {
-                setCurrentRow(cellList.getKeyboardSelectedRow() - 1);
-              }
-              cancelEvent(event);
-              break;
-            case KeyCodes.KEY_PAGEDOWN:
-            case KeyCodes.KEY_SPACE:
-              setCurrentRow(cellList.getKeyboardSelectedRow() + PAGE_INCREMENT);
-              cancelEvent(event);
-              break;
-            case KeyCodes.KEY_PAGEUP:
-              setCurrentRow(cellList.getKeyboardSelectedRow() - PAGE_INCREMENT);
-              cancelEvent(event);
-              break;
-            case KeyCodes.KEY_HOME:
-              setCurrentRow(cellList.getPageStart());
-              cancelEvent(event);
-              break;
-            case KeyCodes.KEY_END:
-              goToVeryEnd();
-              cancelEvent(event);
-              break;
-          }
-          
-          // Bypass the default handler (super-class) for all keydown events.
-          // For keys not handled here, let the browser handle them.
+
+      if (nativeEvent.getType() == BrowserEvents.KEYDOWN) { // A key was pushed down
+        if (nativeEvent.getShiftKey() || nativeEvent.getAltKey()
+            || nativeEvent.getCtrlKey() || nativeEvent.getMetaKey()) {
+          // Ignore if a modifier key is down
           return;
+        }
+
+        switch (nativeEvent.getKeyCode()) {
+          case KeyCodes.KEY_DOWN:  // The down arrow key
+          case KeyCodes.KEY_J:
+            setCurrentRow(cellList.getKeyboardSelectedRow() + 1);
+            cancelEvent(event);
+            break;
+          case KeyCodes.KEY_UP:  // The up arrow key
+          case KeyCodes.KEY_K:
+            if (cellList.getKeyboardSelectedRow() < 1) {
+              goAboveList(event.getValue());
+            } else {
+              setCurrentRow(cellList.getKeyboardSelectedRow() - 1);
+            }
+            cancelEvent(event);
+            break;
+          case KeyCodes.KEY_PAGEDOWN:
+          case KeyCodes.KEY_SPACE:
+            setCurrentRow(cellList.getKeyboardSelectedRow() + PAGE_INCREMENT);
+            cancelEvent(event);
+            break;
+          case KeyCodes.KEY_PAGEUP:
+            setCurrentRow(cellList.getKeyboardSelectedRow() - PAGE_INCREMENT);
+            cancelEvent(event);
+            break;
+          case KeyCodes.KEY_HOME:
+            setCurrentRow(cellList.getPageStart());
+            cancelEvent(event);
+            break;
+          case KeyCodes.KEY_END:
+            goToVeryEnd();
+            cancelEvent(event);
+            break;
+        }
+
+        // Bypass the default handler (super-class) for all keydown events.
+        // For keys not handled here, let the browser handle them.
+        return;
       }
     }
 
