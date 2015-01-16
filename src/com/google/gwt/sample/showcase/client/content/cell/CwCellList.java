@@ -421,7 +421,7 @@ public class CwCellList extends ContentWidget {
     };
 
     cellList.setKeyboardSelectionHandler(
-        new CustomKeyboardHandler<>(cellList, topWidgetForKeyHandler));
+        new CustomKeyboardHandler(cellList, topWidgetForKeyHandler));
 
     setKeyboardPagingPolicy();
     cellList.setKeyboardSelectionPolicy(

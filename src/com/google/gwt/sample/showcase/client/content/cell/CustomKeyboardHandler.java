@@ -16,18 +16,19 @@ import com.google.gwt.user.cellview.client.LoadingStateChangeEvent;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.CellPreviewEvent;
 
-class CustomKeyboardHandler<T extends ContactInfo> extends DefaultKeyboardSelectionHandler<T> {
+class CustomKeyboardHandler extends DefaultKeyboardSelectionHandler<ContactInfo> {
 
   interface SelectableWidget extends HasKeyDownHandlers {
     void selectWidget();
   }
 
   private static final int PAGE_INCREMENT = 11;
-  private final CellList<T> cellList;
+  private final CellList<ContactInfo> cellList;
   private final SelectableWidget widgetAboveList;
   private boolean isEndRequestPending = false;
   
-  public CustomKeyboardHandler(CellList<T> cellList, SelectableWidget widgetAboveList) {
+  public CustomKeyboardHandler(
+      CellList<ContactInfo> cellList, SelectableWidget widgetAboveList) {
     super(cellList);
     this.cellList = cellList;
     this.widgetAboveList = widgetAboveList;
@@ -54,7 +55,7 @@ class CustomKeyboardHandler<T extends ContactInfo> extends DefaultKeyboardSelect
   }
 
   @Override
-  public void onCellPreview(CellPreviewEvent<T> event) {
+  public void onCellPreview(CellPreviewEvent<ContactInfo> event) {
     if (Settings.get().getKeyHandling()) {
       NativeEvent nativeEvent = event.getNativeEvent();
 
@@ -123,12 +124,12 @@ class CustomKeyboardHandler<T extends ContactInfo> extends DefaultKeyboardSelect
 
   // Re-implement DefaultKeyboardSelectionHandler.handledEvent because that's
   // package-private.
-  void cancelEvent(CellPreviewEvent<T> event) {
+  void cancelEvent(CellPreviewEvent<ContactInfo> event) {
     event.setCanceled(true);
     event.getNativeEvent().preventDefault();
   }
 
-  void goAboveList(T keyboardSelectedValue) {
+  void goAboveList(ContactInfo keyboardSelectedValue) {
     cellList.getSelectionModel().setSelected(keyboardSelectedValue, false);
 
     // Unselecting the row (above) will steal the focus (doesn't really need to,
