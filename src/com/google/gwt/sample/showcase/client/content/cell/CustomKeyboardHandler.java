@@ -118,8 +118,11 @@ class CustomKeyboardHandler extends DefaultKeyboardSelectionHandler<ContactInfo>
     // it to a valid row if we tried to set it to a row that doesn't exist.
     int newRow = cellList.getKeyboardSelectedRow();
     
-    // Scroll the row into view?
-    // If you need custom scrolling, e.g. because of fixed elements on the page.
+    // Scroll row into view (needed because the default scrolling is disabled
+    // so the view doesn't jump on data updates, if you've scrolled the current
+    // row out of view).  Also useful, if you need custom scrolling, e.g. 
+    // because of fixed elements on the page.
+    cellList.getRowElement(newRow).scrollIntoView();
   }
 
   // Re-implement DefaultKeyboardSelectionHandler.handledEvent because that's
