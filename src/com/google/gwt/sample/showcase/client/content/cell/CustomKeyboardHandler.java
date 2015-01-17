@@ -152,13 +152,14 @@ class CustomKeyboardHandler extends DefaultKeyboardSelectionHandler<ContactInfo>
     int totalRows = cellList.getRowCount();
     int pageStart = cellList.getPageStart();
     int pageSize = cellList.getPageSize();
+    int renderedRows = cellList.getVisibleItemCount();
     
     if (cellList.isRowCountExact() && totalRows > pageStart + pageSize) {
       isEndRequestPending = true;
       cellList.setPageSize(totalRows - pageStart);
     } else {
       // Just go to the end of what's rendered
-      setCurrentRow(cellList.getVisibleItemCount());
+      setCurrentRow(renderedRows - 1);
     }
   }
   

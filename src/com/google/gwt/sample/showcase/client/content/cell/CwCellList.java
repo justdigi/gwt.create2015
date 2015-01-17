@@ -243,17 +243,16 @@ public class CwCellList extends ContentWidget {
     Widget widget = uiBinder.createAndBindUi(this);
 
     // Create a CellList.
-    Cell<ContactInfo> contactCell = 
-        Cells.makeFocusableWithoutScrolling(
-            Settings.get().getCompositeCell()
-                    ? new CompositeContactCell(images) 
-                : new ContactCell(images.contact()),
-            pagerPanel.getScrollable());
+    Cell<ContactInfo> simpleCell = new ContactCell(images.contact());
+    Cell<ContactInfo> compositeCell = new CompositeContactCell(images);
+    Cell<ContactInfo> contactCell =
+        Settings.get().getCompositeCell() ? compositeCell : simpleCell;
 
     // Set a key provider that provides a unique key for each contact. If key is
     // used to identify contacts when fields (such as the name and address)
     // change.
-    cellList = new CellList<>(contactCell,
+    cellList = new CellList<>(
+        Cells.makeFocusableWithoutScrolling(contactCell, pagerPanel.getScrollable()),
         ContactDatabase.ContactInfo.KEY_PROVIDER);
     cellList.setPageSize(getInitialPageSize());
 
@@ -270,8 +269,8 @@ public class CwCellList extends ContentWidget {
       }
     });
 
-    // Use the same cell to create a widget to show a contact for the user
-    selfContactView = new SimpleContactView(contactCell);
+    // Use the simple cell to create a widget to show a contact for the user
+    selfContactView = new SimpleContactView(simpleCell);
     selfContactView.setContact(ContactDatabase.get().createContactForMe());
     selfContactContainer.setWidget(selfContactView);
     addSelectHandlers(selfContactContainer, new Runnable() {
