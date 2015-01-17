@@ -244,10 +244,11 @@ public class CwCellList extends ContentWidget {
 
     // Create a CellList.
     Cell<ContactInfo> contactCell = 
-        Settings.get().getCompositeCell()
-            ? CompositeContactCellFactory.create(
-                images, pagerPanel.getScrollable())
-            : new ContactCell(images.contact());
+        Cells.makeFocusableWithoutScrolling(
+            Settings.get().getCompositeCell()
+                    ? new CompositeContactCell(images) 
+                : new ContactCell(images.contact()),
+            pagerPanel.getScrollable());
 
     // Set a key provider that provides a unique key for each contact. If key is
     // used to identify contacts when fields (such as the name and address)
