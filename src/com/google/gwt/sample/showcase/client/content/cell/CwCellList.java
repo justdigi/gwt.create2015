@@ -139,11 +139,15 @@ public class CwCellList extends ContentWidget {
 
     interface Templates extends SafeHtmlTemplates {
       @Template(
-          "<table><tr>"
-          + "<td rowspan='3'>{0}</td>"
-          + "<td style='font-size:95%;'>{1}</td></tr><tr>"
-          + "<td>{2}</td>"
-          + "</tr></table>")
+          "<table>"
+          + "<tr>"
+          + "  <td rowspan='2'>{0}</td>"
+          + "  <td style='font-size:95%;'>{1}</td>"
+          + "</tr>"
+          + "<tr>"
+          + "  <td>{2}</td>"
+          + "</tr>"
+          + "</table>")
       SafeHtml cell(SafeHtml imageHtml, String fullName, String address);
     }
     
