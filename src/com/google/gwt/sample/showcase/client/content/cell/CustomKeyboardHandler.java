@@ -157,6 +157,7 @@ class CustomKeyboardHandler extends DefaultKeyboardSelectionHandler<ContactInfo>
     if (cellList.isRowCountExact() && totalRows > pageStart + pageSize) {
       isEndRequestPending = true;
       cellList.setPageSize(totalRows - pageStart);
+      // We'll select the last row after it's loaded
     } else {
       // Just go to the end of what's rendered
       setCurrentRow(renderedRows - 1);
