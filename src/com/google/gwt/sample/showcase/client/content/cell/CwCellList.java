@@ -49,6 +49,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellList;
+import com.google.gwt.user.cellview.client.CellWidget;
 import com.google.gwt.user.cellview.client.HasKeyboardPagingPolicy.KeyboardPagingPolicy;
 import com.google.gwt.user.cellview.client.HasKeyboardSelectionPolicy.KeyboardSelectionPolicy;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -116,6 +117,7 @@ public class CwCellList extends ContentWidget {
   interface Styles extends CssResource {
     String contactFormCell();
     String range();
+    String composite();
     String selfAndOthersContainer();
     String selfContact();
     String scrollContainer();
@@ -216,7 +218,7 @@ public class CwCellList extends ContentWidget {
   @UiField
   FocusPanel selfContactContainer;
 
-  private SimpleContactView selfContactView; 
+  private CellWidget<ContactInfo> selfWidget;
 
   /**
    * The CellList.
@@ -241,7 +243,8 @@ public class CwCellList extends ContentWidget {
   @ShowcaseSource
   @Override
   public Widget onInitialize() {
-    GWT.<Resources>create(Resources.class).styles().ensureInjected();
+    Resources resources = GWT.<Resources>create(Resources.class);
+    resources.styles().ensureInjected();
     Images images = GWT.create(Images.class);
 
     // Create the UiBinder.
@@ -251,10 +254,8 @@ public class CwCellList extends ContentWidget {
     Widget widget = uiBinder.createAndBindUi(this);
 
     // Create a CellList.
-    Cell<ContactInfo> simpleCell = new ContactCell(images.contact());
-    Cell<ContactInfo> compositeCell = new CompositeContactCell(images);
-    Cell<ContactInfo> contactCell =
-        Settings.get().getCompositeCell() ? compositeCell : simpleCell;
+    Cell<ContactInfo> contactCell = Settings.get().getCompositeCell()
+        ? new CompositeContactCell(images) : new ContactCell(images.contact());
 
     // Set a key provider that provides a unique key for each contact. If key is
     // used to identify contacts when fields (such as the name and address)
@@ -279,10 +280,15 @@ public class CwCellList extends ContentWidget {
       }
     });
 
-    // Use the simple cell to create a widget to show a contact for the user
-    selfContactView = new SimpleContactView(simpleCell);
-    selfContactView.setContact(ContactDatabase.get().createContactForMe());
-    selfContactContainer.setWidget(selfContactView);
+    // Re-use the cell to render in a widget and show a contact for the user
+    selfWidget = new CellWidget<>(
+        contactCell, ContactDatabase.get().createContactForMe());
+    selfContactContainer.setWidget(selfWidget);
+
+    if (Settings.get().getCompositeCell()) {
+      selfWidget.addStyleName(resources.styles().composite());
+    }
+
     addSelectHandlers(selfContactContainer, new Runnable() {
       @Override
       public void run() {
@@ -419,7 +425,7 @@ public class CwCellList extends ContentWidget {
 
   void showSelfContactInfo() {
     // We always set the self contact, so we can count on it not being null
-    contactForm.setContact(selfContactView.getContact());
+    contactForm.setContact(selfWidget.getValue());
   }
 
   void setupKeyboardHandling() {

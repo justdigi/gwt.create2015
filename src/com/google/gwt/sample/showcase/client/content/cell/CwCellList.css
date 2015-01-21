@@ -38,14 +38,14 @@
 }
 
 .settings {
-	font-size: 18px;
+  font-size: 18px;
 }
 
 .gwt-CellList-cellListEvenItem,
 .gwt-CellList-cellListOddItem,
-.selfContact div {
-	display: flex;
-	align-items: center;
+.selfContact .composite {
+  display: flex;
+  align-items: center;
 }
 
 .gwt-CellList-cellListEvenItem span,
