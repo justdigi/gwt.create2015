@@ -41,7 +41,7 @@
             ui:field='rangeLabelPager'
             styleName="{res.styles.range}" /> 
         </td>
-        <td valign="top">
+        <td class="{res.styles.settings}" valign="top">
           <g:CheckBox ui:field="windowFillingCheckbox"/>
           Window filling
           <br />
@@ -58,6 +58,9 @@
           <br />
           <g:CheckBox ui:field="keyHandlingCheckbox"/>
           Custom key handling
+          <br />
+          <g:CheckBox ui:field="focusDriftingCheckbox"/>
+          Allow focus drift
           <br />
           <g:CheckBox ui:field="compositeCellCheckbox"/>
           Composite cell

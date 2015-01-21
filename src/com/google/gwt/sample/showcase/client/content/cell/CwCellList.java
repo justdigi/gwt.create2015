@@ -120,6 +120,7 @@ public class CwCellList extends ContentWidget {
     String selfContact();
     String scrollContainer();
     String scrollable();
+    String settings();
   }
 
   /**
@@ -207,6 +208,9 @@ public class CwCellList extends ContentWidget {
   CheckBox keyHandlingCheckbox;
 
   @UiField
+  CheckBox focusDriftingCheckbox;
+  
+  @UiField
   CheckBox compositeCellCheckbox;
 
   @UiField
@@ -256,7 +260,9 @@ public class CwCellList extends ContentWidget {
     // used to identify contacts when fields (such as the name and address)
     // change.
     cellList = new CellList<>(
-        Cells.makeFocusableWithoutScrolling(contactCell, pagerPanel.getScrollable()),
+        Settings.get().getFocusDrifting()
+            ? Cells.makeFocusableWithoutScrolling(contactCell, pagerPanel.getScrollable())
+            : contactCell,
         ContactDatabase.ContactInfo.KEY_PROVIDER);
     cellList.setPageSize(getInitialPageSize());
 
@@ -351,6 +357,15 @@ public class CwCellList extends ContentWidget {
           }
         });
     keyHandlingCheckbox.setValue(Settings.get().getKeyHandling());
+    
+    Settings.get().addFocusDriftingChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            focusDriftingCheckbox.setValue(event.getValue());
+          }
+        });
+    focusDriftingCheckbox.setValue(Settings.get().getFocusDrifting());
 
     Settings.get().addCompositeCellChangeHandler(
         new ValueChangeHandler<Boolean>() {
@@ -470,7 +485,13 @@ public class CwCellList extends ContentWidget {
     Settings.get().setKeyHandling(event.getValue());
     setKeyboardPagingPolicy();
   }
-  
+
+  @UiHandler("focusDriftingCheckbox")
+  protected void onFocusDriftingCheckboxChange(
+      ValueChangeEvent<Boolean> event) {
+    Settings.get().setFocusDrifting(event.getValue());
+  }
+
   @UiHandler("compositeCellCheckbox")
   protected void onCompositeCellCheckboxChange(
       ValueChangeEvent<Boolean> event) {
