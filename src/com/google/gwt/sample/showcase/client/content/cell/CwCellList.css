@@ -37,6 +37,10 @@
   margin-top: 24px;
 }
 
+.settings {
+	font-size: 18px;
+}
+
 .gwt-CellList-cellListEvenItem,
 .gwt-CellList-cellListOddItem,
 .selfContact div {

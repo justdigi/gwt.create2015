@@ -33,6 +33,8 @@ public class Settings {
       new ObservableBoolean("wf", false);
   private ObservableBoolean keyHandling = 
       new ObservableBoolean("kh", false);
+  private ObservableBoolean focusDrifting = 
+      new ObservableBoolean("fd", false);
   private ObservableBoolean compositeCell = 
       new ObservableBoolean("cc", false);
   
@@ -42,6 +44,7 @@ public class Settings {
       conservativeStart,
       windowFilling,
       keyHandling,
+      focusDrifting,
       compositeCell
   };
   
@@ -128,6 +131,21 @@ public class Settings {
   public HandlerRegistration addKeyHandlingChangeHandler(
       ValueChangeHandler<Boolean> handler) {
     return keyHandling.addValueChangeHandler(handler);
+  }
+  
+  public boolean getFocusDrifting() {
+    return focusDrifting.getValue();
+  }
+  
+  public void setFocusDrifting(Boolean value) {
+    if (focusDrifting.setValue(value)) {
+      updateHistory();
+    }
+  }
+  
+  public HandlerRegistration addFocusDriftingChangeHandler(
+      ValueChangeHandler<Boolean> handler) {
+    return focusDrifting.addValueChangeHandler(handler);
   }
   
   public boolean getCompositeCell() {

@@ -120,6 +120,7 @@ public class CwCellList extends ContentWidget {
     String selfContact();
     String scrollContainer();
     String scrollable();
+    String settings();
   }
 
   /**
@@ -139,11 +140,15 @@ public class CwCellList extends ContentWidget {
 
     interface Templates extends SafeHtmlTemplates {
       @Template(
-          "<table><tr>"
-          + "<td rowspan='3'>{0}</td>"
-          + "<td style='font-size:95%;'>{1}</td></tr><tr>"
-          + "<td>{2}</td>"
-          + "</tr></table>")
+          "<table>"
+          + "<tr>"
+          + "  <td rowspan='2'>{0}</td>"
+          + "  <td style='font-size:95%;'>{1}</td>"
+          + "</tr>"
+          + "<tr>"
+          + "  <td>{2}</td>"
+          + "</tr>"
+          + "</table>")
       SafeHtml cell(SafeHtml imageHtml, String fullName, String address);
     }
     
@@ -203,6 +208,9 @@ public class CwCellList extends ContentWidget {
   CheckBox keyHandlingCheckbox;
 
   @UiField
+  CheckBox focusDriftingCheckbox;
+  
+  @UiField
   CheckBox compositeCellCheckbox;
 
   @UiField
@@ -244,15 +252,17 @@ public class CwCellList extends ContentWidget {
 
     // Create a CellList.
     Cell<ContactInfo> simpleCell = new ContactCell(images.contact());
-    Cell<ContactInfo> compositeCell =
-        CompositeContactCellFactory.create(images, pagerPanel.getScrollable());
+    Cell<ContactInfo> compositeCell = new CompositeContactCell(images);
     Cell<ContactInfo> contactCell =
         Settings.get().getCompositeCell() ? compositeCell : simpleCell;
 
     // Set a key provider that provides a unique key for each contact. If key is
     // used to identify contacts when fields (such as the name and address)
     // change.
-    cellList = new CellList<>(contactCell,
+    cellList = new CellList<>(
+        Settings.get().getFocusDrifting()
+            ? Cells.makeFocusableWithoutScrolling(contactCell, pagerPanel.getScrollable())
+            : contactCell,
         ContactDatabase.ContactInfo.KEY_PROVIDER);
     cellList.setPageSize(getInitialPageSize());
 
@@ -347,6 +357,15 @@ public class CwCellList extends ContentWidget {
           }
         });
     keyHandlingCheckbox.setValue(Settings.get().getKeyHandling());
+    
+    Settings.get().addFocusDriftingChangeHandler(
+        new ValueChangeHandler<Boolean>() {
+          @Override
+          public void onValueChange(ValueChangeEvent<Boolean> event) {
+            focusDriftingCheckbox.setValue(event.getValue());
+          }
+        });
+    focusDriftingCheckbox.setValue(Settings.get().getFocusDrifting());
 
     Settings.get().addCompositeCellChangeHandler(
         new ValueChangeHandler<Boolean>() {
@@ -466,7 +485,13 @@ public class CwCellList extends ContentWidget {
     Settings.get().setKeyHandling(event.getValue());
     setKeyboardPagingPolicy();
   }
-  
+
+  @UiHandler("focusDriftingCheckbox")
+  protected void onFocusDriftingCheckboxChange(
+      ValueChangeEvent<Boolean> event) {
+    Settings.get().setFocusDrifting(event.getValue());
+  }
+
   @UiHandler("compositeCellCheckbox")
   protected void onCompositeCellCheckboxChange(
       ValueChangeEvent<Boolean> event) {
