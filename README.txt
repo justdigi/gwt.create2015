@@ -1,11 +1,12 @@
-Sample code for more maintainable, scalable GWT Cell Widgets. This is a fork of the GWT Showcase
-with specific changes to the Cell List demo that highlight how to do things like template-driven
-rendering, infinite scrolling, custom key handling, and more concise Composite Cells. To see the
-demo in action, find Cell Widgets > Cell List in the sidebar and experiment with some of the 
+Sample code for more maintainable, scalable GWT Cell Widgets. This is a fork of
+the GWT Showcase with specific changes to the Cell List demo that highlight how
+to do things like template-driven rendering, infinite scrolling, custom key 
+handling, and more concise Composite Cells. To see the demo in action, find 
+Cell Widgets > Cell List in the sidebar and experiment with some of the 
 checkboxes on the right.
 
-This sample code was originally written to accompany a talk at GWT.create2015. Slides from the talk
-are at http://goo.gl/IhtMRp.
+This sample code was originally written to accompany a talk at GWT.create2015.
+Slides from the talk are at http://goo.gl/IhtMRp.
  
 Have fun!
 
@@ -19,7 +20,8 @@ We've tested against Eclipse 3.4 and 3.5.  Later versions will likely also
 work, earlier versions may not.
 
 If the directory containing this file does not have a .classpath or .project
-file, generate them by running 'ant eclipse.generate -Dgwt.sdk=<PATH_TO_YOUR_SKD_DIR>'
+file, generate them by running 
+'ant eclipse.generate -Dgwt.sdk=<PATH_TO_YOUR_SKD_DIR>'
 
 In Eclipse, go to the File menu and choose:
 
